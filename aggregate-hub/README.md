@@ -81,6 +81,14 @@ The hub stores a server-side HMAC of `site_pseudonym` for distinct-site counting
 
 Uploads are treated as the authenticated site's latest bounded 30-day snapshot. A successful upload atomically replaces that site's prior active snapshot so delayed daily uploads do not repeatedly count overlapping days.
 
+The Hub operator may use accepted rows only to operate and protect the service, deduplicate snapshots, enforce privacy thresholds, investigate malformed or abusive submissions, calculate cross-site comparisons, and support the Semantic Deterrence experiment. Shared data is not intended for visitor or domain identification, individual-site ranking, advertising profiles, lead sales, or remote enforcement.
+
+Aggregate endpoints are public. They expose only thresholded cross-site statistics and never expose `site_pseudonym`, key IDs, per-site rows, or transport logs. Default thresholds are 10 distinct sites and 100 events. Public output is intended for experiment evaluation, response comparison, experiment design, and uncertainty-aware reporting; downstream copies already fetched from the public endpoints cannot be recalled.
+
+Scheduled cleanup deletes site-scoped event rows after 90 days. A signed revocation deletes the authenticated site's batches and clears aggregate caches. A keyed revocation marker remains so the revoked site identity cannot upload again. Revocation cannot remove aggregate output that another party downloaded before the cache was regenerated.
+
+The application schema does not accept network addresses, but the web server, hosting provider, or upstream network may record ordinary HTTPS transport metadata such as source IP and request time. Infrastructure-log access, purpose, and retention must be governed separately from the experiment database and kept to the minimum needed for operations and abuse prevention.
+
 ## Load Design
 
 - Clients should send delayed daily batches with jitter.

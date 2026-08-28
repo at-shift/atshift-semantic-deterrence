@@ -71,11 +71,19 @@ Local source identity currently derives from the server-observed `REMOTE_ADDR`. 
 
 ## Aggregate Sharing
 
-Sharing is off by default. When a site explicitly opts in, the plugin sends delayed daily batches within a site-specific jitter window so participating sites do not all contact the Hub at once.
+Sharing is off by default. No experiment measurement data leaves the site unless a WordPress administrator explicitly enables aggregate sharing. A site may separately enable aggregate readback without contributing its own data. Normal WordPress update checks may contact the public GitHub Releases API independently of experiment sharing.
 
-Shared rows contain aggregate counts and experimental dimensions together with a random installation pseudonym used for deduplication and cross-batch comparison. They do **not** contain IP addresses, URLs, cookies, request bodies, domains, site names, visitor identifiers, or local request HMACs. Because the installation pseudonym is stable, this data is accurately described as **pseudonymous aggregate data**, not unlinkable anonymous data.
+When sharing is enabled, the plugin sends delayed daily batches within a site-specific jitter window. A shared row contains a random installation pseudonym; schema, plugin, and policy versions; fixed response and experiment dimensions; a response fingerprint and HTTP status; a bounded detection category and level; outcome, follow-up bucket, and observation date; and aggregate event and follow-up counts.
 
-A site may read the shared aggregate results without contributing its own data. Readback is decision support: the Hub may report which fixed response currently has the highest estimated non-continuation rate and the supporting sample size. It cannot send executable code, force a response choice, change local settings, or issue a blocking command.
+Shared rows do **not** contain raw or hashed IP addresses, local source HMACs, URLs, paths, queries, cookies, authorization data, request bodies, form values, domains, site names, administrator details, visitor identifiers, email addresses, raw User-Agent strings, WordPress user data, or local detailed logs. Because the installation pseudonym is stable and the Hub binds its server-side HMAC to one site credential, this data is accurately described as **pseudonymous aggregate data**, not unlinkable anonymous data.
+
+The Hub uses accepted rows to replace overlapping site snapshots, enforce privacy thresholds, detect malformed or abusive submissions, and calculate cross-site comparisons. Thresholded aggregate JSON is available to clients and other readers of the public endpoints. It may report sample sizes, observed non-continuation rates, category and experiment-arm comparisons, and the fixed response currently estimated to perform best. Default publication thresholds are 10 distinct sites and 100 events.
+
+The intended uses are experiment evaluation, improved experimental design, false-positive analysis, response-hypothesis discussion, and uncertainty-aware aggregate reporting. The project does not use shared data to identify visitors or domains, rank participating sites, create advertising profiles, sell leads, or remotely control a site. Readback cannot send executable code, force a response, change local settings, or issue a blocking command. Because aggregate endpoints are public, the project cannot technically prevent third parties from retaining or reusing thresholded results that have already been published.
+
+Each upload is treated as the site's latest bounded 30-day snapshot. Hub event rows are removed after 90 days by scheduled cleanup. A signed revocation deletes that site's stored batches and clears generated caches while retaining a keyed revocation marker that prevents later uploads for the revoked identity. Results already downloaded or incorporated into published aggregate analysis cannot be recalled.
+
+The HTTPS connection itself exposes ordinary transport metadata, such as the connecting server IP and request time, to the Hub's hosting and network infrastructure. This metadata is not part of the experiment payload or aggregate result schema. See [the repository data-sharing section](../README.md#data-sharing-scope-and-use) and [the Hub privacy boundary](../aggregate-hub/README.md#privacy-boundary).
 
 ```mermaid
 flowchart LR

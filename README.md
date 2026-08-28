@@ -59,15 +59,28 @@ flowchart LR
 
 The response catalog stays bounded so results remain comparable. New response hypotheses should enter through an explicit versioned experiment, not arbitrary per-site text.
 
-## Consent And Privacy
+## Data Sharing Scope And Use
 
-Observation-only is the default. Deterrence, experiment participation, aggregate sharing, and aggregate readback are independent choices presented in the plugin.
+Observation-only is the default. Deterrence, experiment participation, aggregate sharing, and aggregate readback are separate choices. No experiment measurement data leaves the site unless aggregate sharing is explicitly enabled. Reading shared results can be enabled without contributing local results. Separately, normal WordPress update checks may contact the public GitHub Releases API to discover plugin updates.
 
-Local event records omit raw request bodies, cookies, authorization headers, query values, full URLs, raw IP addresses, raw User-Agent values, domains, site names, and WordPress user data.
+An opted-in site sends delayed aggregate rows containing only:
 
-Sharing is off by default. An opted-in site sends aggregate counts and experimental dimensions with a random installation pseudonym. The Hub stores a server-side HMAC of that pseudonym and binds it to one independently issued site credential. Shared data is therefore accurately described as **pseudonymous aggregate data**, not unlinkable anonymous data.
+- A random installation pseudonym and schema, plugin, and policy versions.
+- The fixed response variant, experiment arm, response catalog ID, response fingerprint, and HTTP status.
+- A bounded detection category and confidence level, outcome, follow-up time bucket, and observation date.
+- Aggregate event and follow-up counts for that combination.
 
-The Hub rejects IP, URL, path, query, domain, host, cookie, body, User-Agent, and email fields. It also accepts only the fixed response catalog and a closed aggregate schema. Public rows remain hidden until configured minimum site and event counts are met.
+The aggregate payload does **not** contain raw or hashed IP addresses, local source HMACs, URLs, paths, queries, domains, site names, administrator details, cookies, authorization data, request bodies, form values, email addresses, raw User-Agent strings, WordPress user data, or local detailed logs. The Hub rejects fields outside its closed schema. The stable installation pseudonym is HMACed again by the Hub and bound to one site credential, so this is accurately described as **pseudonymous aggregate data**, not unlinkable anonymous data.
+
+The Hub operator uses accepted rows to deduplicate site snapshots, enforce privacy thresholds, detect malformed or abusive submissions, calculate cross-site comparisons, and operate the service. Thresholded JSON results may be read by plugin clients and by anyone who accesses the public aggregate endpoints. They may show sample sizes, observed non-continuation rates, category and experiment-arm comparisons, and the response currently estimated to perform best. Default publication thresholds are 10 distinct sites and 100 events; a deployment may use stricter thresholds.
+
+The intended uses are evaluating the experiment, improving its design, discussing response hypotheses, finding false-positive patterns, and publishing uncertainty-aware aggregate analysis. The project does not use shared data to identify visitors or participating domains, rank individual sites, build advertising profiles, sell leads, or remotely control a site. Aggregate readback contains no executable code, blocking command, forced setting, or automatic policy change. A local administrator must decide whether to change a response. Because aggregate endpoints are public, the project cannot technically prevent third parties from retaining or reusing already published thresholded results; this is one reason site-level and visitor-level data are excluded from public output.
+
+The current Hub treats each upload as that site's latest bounded 30-day snapshot and replaces the prior active snapshot. Site-scoped event rows are removed after 90 days by scheduled cleanup. A signed revocation deletes the site's stored batches, clears generated aggregate caches, and retains a keyed revocation marker to reject later uploads for that site identity. Revocation cannot recall aggregate JSON already downloaded by others or analysis already published from earlier thresholded results.
+
+As with any HTTPS service, the Hub's hosting and network infrastructure may observe transport metadata such as the connecting server IP address and request time in operational logs. That metadata is not accepted as an experiment field or included in aggregate result rows. Operators should document and minimize infrastructure-log retention separately.
+
+See [the plugin README](wordpress-plugin/README.md#aggregate-sharing) and [the Hub privacy boundary](aggregate-hub/README.md#privacy-boundary) for implementation details.
 
 ## Load And Integrity
 
