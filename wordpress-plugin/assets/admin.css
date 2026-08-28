@@ -608,7 +608,16 @@
 }
 
 .atsdn-settings-details .form-table {
-	margin: 0;
+	box-sizing: border-box;
+	margin: 2px 16px 16px;
+	width: calc(100% - 32px);
+}
+
+.atsdn-settings-details .form-table textarea,
+.atsdn-settings-details .form-table input,
+.atsdn-settings-details .form-table select {
+	box-sizing: border-box;
+	max-width: 100%;
 }
 
 .atsdn-hub-status {
