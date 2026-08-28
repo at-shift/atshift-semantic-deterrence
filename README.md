@@ -82,6 +82,18 @@ As with any HTTPS service, the Hub's hosting and network infrastructure may obse
 
 See [the plugin README](wordpress-plugin/README.md#aggregate-sharing) and [the Hub privacy boundary](aggregate-hub/README.md#privacy-boundary) for implementation details.
 
+## Data Use And Publication
+
+Participants can retrieve the currently available, thresholded cross-site statistics whenever the aggregate service is operating. Contributing data is not required for read access, and the Hub does not give the project operator or selected participants exclusive access. Readback is limited to published aggregate JSON; it never provides another site's rows, installation pseudonym, credentials, transport logs, or raw request data.
+
+The project operator will not turn the collected Hub data into an academic paper or reserve first publication for itself. The purpose of collecting the data is to create shared evidence that site operators and the wider community can inspect and use while this Web experiment evolves.
+
+Participants and other readers may, without prior permission, analyze, summarize, compare, visualize, quote, republish, or present the published aggregate results. This includes use in websites, reports, articles, talks, conference presentations, teaching materials, and proposals for later experiments. The same freedom applies to the project maintainers when publishing operational summaries or experiment updates.
+
+Any publication or presentation should identify Semantic Deterrence as the source, include the retrieval date and relevant schema or policy version when available, show sample sizes and uncertainty, and preserve the project's careful outcome language. A result may be described as **"no continuation observed after the warning"**; it must not be presented as proof that an AI agent was identified, an attack was stopped, or a vulnerability was absent. Published aggregates must not be combined with other information in an attempt to re-identify a visitor or participating site.
+
+Aggregate results can change as new snapshots arrive, old rows expire, sites revoke participation, privacy thresholds are applied, or the experiment schema evolves. Anyone relying on the data should retain the exact JSON or a dated export used for their analysis and clearly distinguish a historical snapshot from the current Hub view.
+
 ## Load And Integrity
 
 - Sites send delayed daily snapshots inside a deterministic jitter window.

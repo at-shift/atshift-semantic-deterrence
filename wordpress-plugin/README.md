@@ -85,6 +85,16 @@ Each upload is treated as the site's latest bounded 30-day snapshot. Hub event r
 
 The HTTPS connection itself exposes ordinary transport metadata, such as the connecting server IP and request time, to the Hub's hosting and network infrastructure. This metadata is not part of the experiment payload or aggregate result schema. See [the repository data-sharing section](../README.md#data-sharing-scope-and-use) and [the Hub privacy boundary](../aggregate-hub/README.md#privacy-boundary).
 
+## Data Use And Publication
+
+Participants can retrieve the currently available, thresholded aggregate statistics whenever the Hub is operating. Read access does not require contributing local data. It provides cross-site aggregate JSON only, never another site's rows, installation pseudonym, credentials, transport logs, or raw requests.
+
+The project operator will not use the collected Hub data to produce an academic paper or reserve first publication for itself. Participants, maintainers, and other readers may analyze, summarize, compare, visualize, quote, republish, or present the published aggregate results without prior permission. Possible uses include websites, reports, articles, talks, conference presentations, teaching materials, and proposals for future experiments.
+
+Public use should identify Semantic Deterrence as the source, include the retrieval date and relevant schema or policy version, report sample size and uncertainty, and preserve the wording **"no continuation observed after the warning"**. Aggregate results must not be represented as proof that an AI agent was identified, an attack was stopped, or a vulnerability was absent, and they must not be combined with other data in an attempt to re-identify a visitor or site.
+
+The current Hub view may change when new data arrives, rows expire, a site revokes participation, thresholds apply, or the schema changes. Retain a dated JSON export when reproducibility matters.
+
 ```mermaid
 flowchart LR
     A[Participating WordPress sites] -->|Delayed pseudonymous aggregate batches| H[Aggregate Hub]

@@ -89,6 +89,14 @@ Scheduled cleanup deletes site-scoped event rows after 90 days. A signed revocat
 
 The application schema does not accept network addresses, but the web server, hosting provider, or upstream network may record ordinary HTTPS transport metadata such as source IP and request time. Infrastructure-log access, purpose, and retention must be governed separately from the experiment database and kept to the minimum needed for operations and abuse prevention.
 
+## Data Use And Publication
+
+The thresholded aggregate endpoints are available to participating clients and other readers whenever the service is operating. Contributing a site snapshot is not a condition of read access. The project operator does not reserve exclusive or advance access to the aggregate results and will not turn the collected Hub data into an academic paper.
+
+Published aggregate JSON may be analyzed, summarized, compared, visualized, quoted, republished, or presented without prior permission. Users should identify Semantic Deterrence as the source, record the retrieval date and schema or policy version, report sample sizes and uncertainty, and avoid claims that the data identified an AI agent, stopped an attack, or proved a vulnerability was absent. Public aggregates must not be combined with other information to attempt visitor or site re-identification.
+
+Results are mutable as snapshots arrive, retention cleanup runs, sites revoke participation, privacy thresholds change, or the schema evolves. Reproducible analysis should retain the exact dated JSON used rather than relying on the current endpoint to remain unchanged.
+
 ## Load Design
 
 - Clients should send delayed daily batches with jitter.
