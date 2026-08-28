@@ -4,6 +4,7 @@
  * Plugin URI: https://github.com/at-shift/atshift-semantic-deterrence
  * Description: 不審な自動探索を観測し、必要に応じて機械可読な状態と自然言語の撤退勧告を返します。
  * Version: 0.1.1
+ * Update URI: https://github.com/at-shift/atshift-semantic-deterrence
  * Requires at least: 6.4
  * Requires PHP: 7.4
  * Author: @shift
@@ -28,6 +29,7 @@ define( 'ATSHIFT_SEMANTIC_DETERRENCE_URL', plugin_dir_url( __FILE__ ) );
 require_once ATSHIFT_SEMANTIC_DETERRENCE_DIR . 'includes/class-atshift-semantic-deterrence-storage.php';
 require_once ATSHIFT_SEMANTIC_DETERRENCE_DIR . 'includes/class-atshift-semantic-deterrence-detector.php';
 require_once ATSHIFT_SEMANTIC_DETERRENCE_DIR . 'includes/class-atshift-semantic-deterrence-admin.php';
+require_once ATSHIFT_SEMANTIC_DETERRENCE_DIR . 'includes/class-atshift-semantic-deterrence-updater.php';
 require_once ATSHIFT_SEMANTIC_DETERRENCE_DIR . 'includes/class-atshift-semantic-deterrence-plugin.php';
 
 register_activation_hook( __FILE__, array( 'Atshift_Semantic_Deterrence_Plugin', 'activate' ) );
@@ -43,5 +45,6 @@ add_action(
 		);
 
 		Atshift_Semantic_Deterrence_Plugin::instance();
+		Atshift_Semantic_Deterrence_Updater::init();
 	}
 );

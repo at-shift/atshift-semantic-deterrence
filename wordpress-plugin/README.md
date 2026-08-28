@@ -98,6 +98,8 @@ This is research software in an early pilot. Review classifications locally befo
 
 Requirements: WordPress 6.4 or later and PHP 7.4 or later.
 
+After installation, WordPress checks the public GitHub Releases feed for newer versions. Release packages are installed only after their accompanying SHA-256 checksum is verified.
+
 ## Languages
 
 The plugin includes Japanese, English (US), Spanish, German, French, Brazilian Portuguese, Italian, Russian, Dutch, Simplified Chinese, Polish, Turkish, Indonesian, Traditional Chinese (Taiwan), and Korean translations.

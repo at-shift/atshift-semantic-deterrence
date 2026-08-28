@@ -1,0 +1,43 @@
+name: Publish plugin release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate tag and plugin version
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag_version="${GITHUB_REF_NAME#v}"
+          plugin_version="$(sed -n 's/^ \* Version: //p' wordpress-plugin/atshift-semantic-deterrence.php | head -n 1)"
+          test "$tag_version" = "$plugin_version"
+
+      - name: Build WordPress package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/atshift-semantic-deterrence
+          rsync -a --exclude='.DS_Store' wordpress-plugin/ build/atshift-semantic-deterrence/
+          cd build
+          zip -qr atshift-semantic-deterrence.zip atshift-semantic-deterrence
+          sha256sum atshift-semantic-deterrence.zip > atshift-semantic-deterrence.zip.sha256
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "$GITHUB_REF_NAME"
+          build/atshift-semantic-deterrence.zip
+          build/atshift-semantic-deterrence.zip.sha256
+          --generate-notes
+          --verify-tag

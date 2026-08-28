@@ -76,6 +76,8 @@ Requirements: WordPress 6.4 or later and PHP 7.4 or later.
 
 See [the plugin README](wordpress-plugin/README.md) for operating modes, response variants, languages, and development details.
 
+Public GitHub Releases include a WordPress-ready ZIP and its SHA-256 checksum. Installed copies check the latest release at most once every six hours and only offer packages whose checksum asset is present. Future version tags automatically build these assets through GitHub Actions.
+
 ## Run The Aggregate Hub
 
 The Hub targets a simple PHP 8 and MySQL deployment. Serve only `aggregate-hub/public/`, keep the real PHP configuration outside the public document root, import `aggregate-hub/schema.sql`, issue one random credential per site, and schedule `aggregate-hub/tools/cleanup.php`.
