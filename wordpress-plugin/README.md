@@ -1,8 +1,18 @@
-# atshift Semantic Deterrence
+# Semantic Deterrence
 
 **A WordPress research plugin for measuring whether suspicious automated probing continues after a clear, machine-readable refusal.**
 
-atshift Semantic Deterrence explores a small but useful question for the agentic web: when a site returns an ordinary HTTP refusal together with an explicit policy statement and a natural-language recommendation to stop, does the observed probing behavior change?
+Semantic Deterrence explores a small but useful question for the agentic web: when a site returns an ordinary HTTP refusal together with an explicit policy statement and a natural-language recommendation to stop, does the observed probing behavior change?
+
+## Why This Experiment Exists
+
+Websites are routinely explored for exposed files, administration surfaces, backup archives, traversal paths, and other possible weaknesses. Conventional automated tools will not understand a warning, but an AI agent involved in selecting the next request may be able to interpret both machine-readable policy state and natural-language context.
+
+This leads to a deliberately modest hypothesis: if a site clearly states that probing has been recognized, access is not authorized, and continued exploration is unlikely to be useful, a decision-making agent may choose not to continue. We do not know whether this works, how often it works, or which wording matters. The plugin exists to test those questions rather than assume the answers.
+
+Participating sites compare a generic `403` control with a fixed response catalog and measure whether suspicious probing was observed again during a defined follow-up window. Site owners may keep all measurements local, read cross-site aggregate results without contributing, or separately opt in to sharing privacy-bounded aggregate statistics.
+
+If you operate a WordPress site and are comfortable joining an early research pilot, please consider participating. A useful evidence base requires observations from many independently operated sites. Pull Requests and discussions proposing response hypotheses, experiment designs, statistical methods, false-positive cases, translations, and privacy improvements are also welcome.
 
 The plugin does not identify visitors as AI. It classifies a narrow set of suspicious request patterns, returns an optional fixed-catalog response, and measures whether probing from the same local source identity was observed again during the follow-up window. Results are described precisely as **"no continuation observed after the warning"**. They are not described as an attack being stopped, an AI being detected, or an intrusion being prevented.
 

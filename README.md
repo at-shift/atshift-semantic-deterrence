@@ -1,8 +1,20 @@
-# atshift Semantic Deterrence
+# Semantic Deterrence
 
 **An open WordPress experiment and aggregate service for measuring whether suspicious automated probing continues after a clear refusal.**
 
-atshift Semantic Deterrence explores a narrow Agentic Web governance question: when a site returns an ordinary HTTP refusal together with a machine-readable policy state and a natural-language recommendation to stop, is continued probing observed less often?
+Semantic Deterrence explores a narrow Agentic Web governance question: when a site returns an ordinary HTTP refusal together with a machine-readable policy state and a natural-language recommendation to stop, is continued probing observed less often?
+
+## Why This Experiment Exists
+
+Websites are routinely explored for exposed files, administration surfaces, backup archives, traversal paths, and other possible weaknesses. Much of this activity is conventional automation that will never interpret a message. Increasingly, however, an AI agent may be involved in choosing the next request, evaluating a response, or deciding whether continued exploration is useful.
+
+That distinction suggests a testable idea. An ordinary `403 Forbidden` tells an HTTP client that access was refused, but gives a decision-making agent little explicit context. If the response also states, in machine-readable and natural-language form, that the site has recognized the probing pattern, that access is not authorized, and that continued exploration is unlikely to be useful, might an agent choose to stop?
+
+We do not yet know. That uncertainty is the reason for this open Web experiment.
+
+Participating sites compare a generic `403` control with a small, fixed catalog of semantic responses and then measure whether suspicious probing was observed again during a defined follow-up window. No individual site can answer the question reliably from a handful of events. By contributing privacy-bounded aggregate results, many independently operated sites can build a more useful evidence base about which responses appear effective, ineffective, or still uncertain.
+
+If you operate a WordPress site and are comfortable joining an early research pilot, please consider participating in the experiment and contributing aggregate statistics. Participation is optional, sharing is separately opt-in, and aggregate results can be read without contributing data. Useful experiment designs, statistical methods, response hypotheses, false-positive reports, translations, and privacy improvements are also welcome through Pull Requests and discussions.
 
 The project does not identify visitors as AI. It classifies a bounded set of suspicious request patterns and measures whether the same local source series was observed probing again during a follow-up window. Results are described as **"no continuation observed after the warning"**. They are not described as an attack being stopped, an AI being detected, or an intrusion being prevented.
 
