@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to rebuild and verify
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -11,14 +17,18 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.RELEASE_TAG }}
 
       - name: Validate tag and plugin version
         shell: bash
         run: |
           set -euo pipefail
-          tag_version="${GITHUB_REF_NAME#v}"
+          tag_version="${RELEASE_TAG#v}"
           plugin_version="$(sed -n 's/^ \* Version: //p' wordpress-plugin/atshift-semantic-deterrence.php | head -n 1)"
           test "$tag_version" = "$plugin_version"
 
@@ -32,12 +42,19 @@ jobs:
           zip -qr atshift-semantic-deterrence.zip atshift-semantic-deterrence
           sha256sum atshift-semantic-deterrence.zip > atshift-semantic-deterrence.zip.sha256
 
-      - name: Create GitHub Release
+      - name: Publish GitHub Release assets
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >-
-          gh release create "$GITHUB_REF_NAME"
-          build/atshift-semantic-deterrence.zip
-          build/atshift-semantic-deterrence.zip.sha256
-          --generate-notes
-          --verify-tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          assets=(
+            build/atshift-semantic-deterrence.zip
+            build/atshift-semantic-deterrence.zip.sha256
+          )
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" "${assets[@]}" --clobber
+          else
+            gh release create "$RELEASE_TAG" "${assets[@]}" --generate-notes --verify-tag
+          fi
