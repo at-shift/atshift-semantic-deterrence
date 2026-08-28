@@ -1,12 +1,27 @@
 # atshift Semantic Deterrence
 
-**A WordPress research plugin for measuring whether suspicious automated probing continues after a clear, machine-readable refusal.**
+**An open WordPress experiment and aggregate service for measuring whether suspicious automated probing continues after a clear refusal.**
 
-atshift Semantic Deterrence explores a small but useful question for the agentic web: when a site returns an ordinary HTTP refusal together with an explicit policy statement and a natural-language recommendation to stop, does the observed probing behavior change?
+atshift Semantic Deterrence explores a narrow Agentic Web governance question: when a site returns an ordinary HTTP refusal together with a machine-readable policy state and a natural-language recommendation to stop, is continued probing observed less often?
 
-The plugin does not identify visitors as AI. It classifies a narrow set of suspicious request patterns, returns an optional fixed-catalog response, and measures whether probing from the same local source identity was observed again during the follow-up window. Results are described precisely as **"no continuation observed after the warning"**. They are not described as an attack being stopped, an AI being detected, or an intrusion being prevented.
+The project does not identify visitors as AI. It classifies a bounded set of suspicious request patterns and measures whether the same local source series was observed probing again during a follow-up window. Results are described as **"no continuation observed after the warning"**. They are not described as an attack being stopped, an AI being detected, or an intrusion being prevented.
 
-This is an additional semantic-friction layer. It does not replace a WAF, CDN rule, rate limit, authentication control, or server hardening.
+This layer does not replace a WAF, CDN rule, rate limit, authentication control, access policy, or server hardening.
+
+## Repository
+
+- [`wordpress-plugin/`](wordpress-plugin/) contains the installable WordPress plugin.
+- [`aggregate-hub/`](aggregate-hub/) contains the small PHP/MySQL aggregate service.
+- [`docs/screenshots/`](docs/screenshots/) contains public English admin screenshots.
+
+The Hub is intentionally modest: opted-in sites send delayed pseudonymous aggregate snapshots; every client may read thresholded cross-site results. It does not distribute executable code, force a response choice, change local settings, or issue blocking commands.
+
+```mermaid
+flowchart LR
+    W[Participating WordPress sites] -->|Delayed signed aggregate snapshots| H[Aggregate Hub]
+    H -->|Thresholded advisory results| W
+    H -. no code, commands, or forced settings .-> W
+```
 
 ## Screenshots
 
@@ -22,114 +37,77 @@ This is an additional semantic-friction layer. It does not replace a WAF, CDN ru
 
 ![Mode, response, experiment, advanced, and Hub settings](docs/screenshots/settings-en.png)
 
-## What This Experiment Tests
+## What We Are Testing
 
 - Whether suspicious probing continues after a generic `403` response.
 - Whether one of five fixed semantic response variants changes the observed non-continuation rate.
-- Whether consistently returning one response differs from using a predetermined response sequence for repeated probes.
-- Whether results remain useful across participating sites without collecting raw requests centrally.
-- Where false positives occur and which exclusions or classification rules are needed before broader deployment.
+- Whether consistently returning one response differs from using a predetermined sequence for repeated probes.
+- Whether useful comparisons can be shared without centrally collecting raw requests.
+- Where false positives occur and which exclusions are needed before broader deployment.
 
-The response catalog is intentionally bounded. Arbitrary custom warning text would make cross-site comparisons difficult and could create an ever-growing set of statistically weak variants.
+The response catalog stays bounded so results remain comparable. New response hypotheses should enter through an explicit versioned experiment, not arbitrary per-site text.
 
-## Operating Modes
+## Consent And Privacy
 
-- **Observe this site only** records local aggregate events and does not change HTTP responses. This is the default.
-- **Deter on this site** returns the selected semantic response for high-confidence classifications.
-- **Deter and temporarily limit on this site** can return `429` after continuation is observed.
-- **Participate in the experiment while deterring on this site** assigns a fixed experiment strategy, compares the generic `403` control with the five semantic responses, and can share aggregate results when sharing is separately enabled.
+Observation-only is the default. Deterrence, experiment participation, aggregate sharing, and aggregate readback are independent choices presented in the plugin.
 
-Deterrence, experiment participation, aggregate sharing, and aggregate readback each require an explicit choice. Experiment assignment is locked after the experiment starts and becomes selectable again only after local experiment data is deleted; deletion also returns the plugin to observation mode.
+Local event records omit raw request bodies, cookies, authorization headers, query values, full URLs, raw IP addresses, raw User-Agent values, domains, site names, and WordPress user data.
 
-## Response Catalog
+Sharing is off by default. An opted-in site sends aggregate counts and experimental dimensions with a random installation pseudonym. The Hub stores a server-side HMAC of that pseudonym and binds it to one independently issued site credential. Shared data is therefore accurately described as **pseudonymous aggregate data**, not unlinkable anonymous data.
 
-1. Policy notice
-2. Detection and local-recording notice
-3. Low-utility-of-continuation notice
-4. Machine-readable notice
-5. Combined notice
+The Hub rejects IP, URL, path, query, domain, host, cookie, body, User-Agent, and email fields. It also accepts only the fixed response catalog and a closed aggregate schema. Public rows remain hidden until configured minimum site and event counts are met.
 
-Experiments also include a generic `403` control without a semantic response body. The plugin says that a request was recorded or rate-limited only when those behaviors are actually enabled.
+## Load And Integrity
 
-## Local Measurement
+- Sites send delayed daily snapshots inside a deterministic jitter window.
+- One independently generated Hub key is issued per participating site.
+- A new upload atomically replaces that site's previous active snapshot, preventing overlapping daily windows from being counted repeatedly.
+- Upload and revocation limits are enforced per key.
+- Aggregate reads use generation-bound database caching and HTTP revalidation.
+- Retention cleanup is a bounded CLI task, never work triggered by public GET requests.
 
-The plugin currently classifies high-confidence probes for sensitive configuration files, backup archives, version-control paths, unrelated administration surfaces, traversal-like paths, repeated `404` requests, method anomalies, and administrator-defined path prefixes.
+## Install The Plugin
 
-Local event records contain bounded categorical and experimental fields, response fingerprints, HTTP status, follow-up counts, outcome, policy version, and keyed local identifiers. Raw IP addresses, full URLs, query values, cookies, request bodies, authorization headers, raw User-Agent values, domains, site names, and WordPress user data are not written to the event table.
+Build or download a release ZIP whose root folder is `atshift-semantic-deterrence`, then install it through WordPress. Source installation can use `wordpress-plugin/` directly as that plugin folder.
 
-Local source identity currently derives from the server-observed `REMOTE_ADDR`. This deliberately avoids trusting forwarded headers, but it can group multiple visitors behind NAT or a reverse proxy. A future trusted-proxy adapter is needed for deployments where the web server does not expose the actual client address to WordPress.
-
-## Aggregate Sharing
-
-Sharing is off by default. When a site explicitly opts in, the plugin sends delayed daily batches within a site-specific jitter window so participating sites do not all contact the Hub at once.
-
-Shared rows contain aggregate counts and experimental dimensions together with a random installation pseudonym used for deduplication and cross-batch comparison. They do **not** contain IP addresses, URLs, cookies, request bodies, domains, site names, visitor identifiers, or local request HMACs. Because the installation pseudonym is stable, this data is accurately described as **pseudonymous aggregate data**, not unlinkable anonymous data.
-
-A site may read the shared aggregate results without contributing its own data. Readback is decision support: the Hub may report which fixed response currently has the highest estimated non-continuation rate and the supporting sample size. It cannot send executable code, force a response choice, change local settings, or issue a blocking command.
-
-```mermaid
-flowchart LR
-    A[Participating WordPress sites] -->|Delayed pseudonymous aggregate batches| H[Aggregate Hub]
-    H -->|Bounded aggregate results only| A
-    H -. no code, commands, or forced settings .-> A
-```
-
-## Current Safeguards
-
-- Observation-only default and independent opt-ins.
-- Fixed response catalog and high-confidence response threshold.
-- Local exclusions for paths and source addresses.
-- Daily rotating measurement identifiers and a separate stable experiment assignment key.
-- Per-source duplicate suppression and site-wide write budgets.
-- Thirty-day local retention for event rows.
-- HTTPS-only Hub communication by default, with no redirects and bounded response sizes.
-- HMAC-signed batch uploads with timestamp and nonce headers.
-- Schema-validated, normalized Hub readback with no remote-control fields.
-
-This is research software in an early pilot. Review classifications locally before enabling response changes, keep an independent WAF in place, and report unexpected classifications.
-
-## Installation
-
-1. Download a release ZIP or clone this repository into `wp-content/plugins/atshift-semantic-deterrence`.
-2. Activate **atshift Semantic Deterrence** in WordPress.
-3. Open **Semantic Deterrence > Overview** and complete the three-step consent guide.
-4. Keep **Observe this site only** selected while reviewing local detections.
-5. Enable deterrence, experiment participation, sharing, or readback only after reviewing the relevant boundaries.
+Open **Semantic Deterrence > Overview**, complete the consent guide, and keep **Observe this site only** selected while reviewing initial classifications.
 
 Requirements: WordPress 6.4 or later and PHP 7.4 or later.
 
-## Languages
+See [the plugin README](wordpress-plugin/README.md) for operating modes, response variants, languages, and development details.
 
-The plugin includes Japanese, English (US), Spanish, German, French, Brazilian Portuguese, Italian, Russian, Dutch, Simplified Chinese, Polish, Turkish, Indonesian, Traditional Chinese (Taiwan), and Korean translations.
+## Run The Aggregate Hub
 
-## Contributing Experiments
+The Hub targets a simple PHP 8 and MySQL deployment. Serve only `aggregate-hub/public/`, keep the real PHP configuration outside the public document root, import `aggregate-hub/schema.sql`, issue one random credential per site, and schedule `aggregate-hub/tools/cleanup.php`.
 
-Interesting ideas are welcome as Pull Requests or GitHub discussions. Particularly useful contributions include:
+See [the Hub README](aggregate-hub/README.md) for endpoints, signing, privacy fields, schema installation, and maintenance.
 
-- A clearly stated response hypothesis that can fit a bounded comparison catalog.
-- Better experimental designs for fixed text versus predetermined sequences.
-- Statistical methods that communicate uncertainty and minimum sample sizes honestly.
-- Reproducible false-positive cases and narrowly scoped classification improvements.
-- Privacy-preserving aggregation proposals.
-- Trusted adapters for Cloudflare and web-server enforcement layers.
-- Accessibility, localization, and dashboard clarity improvements.
+## Contributing
 
-Please describe what a proposal intends to test, what outcome would count as evidence, possible confounders, and what data it requires. Changes that silently expand collection, identify visitors as AI, overclaim outcomes, or let the Hub control local execution are out of scope.
+Pull Requests and discussions are welcome, especially for:
+
+- Reproducible false-positive cases and narrow classification improvements.
+- Better fixed-text versus predetermined-sequence experiment designs.
+- Statistical methods that communicate uncertainty and sample size honestly.
+- Privacy-preserving aggregation and anti-poisoning controls.
+- Cloudflare and web-server adapters that preserve local operator control.
+- Accessibility, localization, and dashboard clarity.
+
+Please state what a proposal tests, what outcome would count as evidence, possible confounders, and what data it requires. Changes that silently expand collection, identify visitors as AI, overclaim outcomes, or let the Hub control local execution are out of scope.
+
+Only test sites and infrastructure you own or have explicit permission to assess.
 
 ## Development
 
-The plugin is intentionally dependency-light. Before opening a Pull Request:
-
 ```bash
-find . -name '*.php' -print0 | xargs -0 -n1 php -l
-for po in languages/*.po; do msgfmt --check-format --check-header -o /dev/null "$po"; done
+find wordpress-plugin aggregate-hub -name '*.php' -print0 | xargs -0 -n1 php -l
+php aggregate-hub/tests/run.php
+for po in wordpress-plugin/languages/*.po; do msgfmt --check-format --check-header -o /dev/null "$po"; done
 ```
-
-Test observation and deterrence behavior in an isolated WordPress environment. Do not probe systems you do not own or have explicit permission to test.
 
 ## Security
 
-Please report vulnerabilities through [GitHub private vulnerability reporting](https://github.com/at-shift/atshift-semantic-deterrence/security/advisories/new). See [SECURITY.md](SECURITY.md) for scope and handling guidance.
+Please use [GitHub private vulnerability reporting](https://github.com/at-shift/atshift-semantic-deterrence/security/advisories/new). Do not include credentials, raw production requests, or personal data in a public issue. See [SECURITY.md](SECURITY.md).
 
 ## License
 

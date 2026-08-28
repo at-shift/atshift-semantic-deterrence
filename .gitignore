@@ -1,6 +1,10 @@
 .DS_Store
 ._*
 private/
+aggregate-hub/private/
+aggregate-hub/semantic-deterrence-hub-config.php
+semantic-deterrence-hub-config.php
+*.local.php
 *.zip
 *.log
 .idea/
