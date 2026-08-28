@@ -1,4 +1,4 @@
-# Semantic Deterrence
+# Semantic Deterrence: An Open Experiment for the Agentic Web
 
 **A WordPress research plugin for measuring whether suspicious automated probing continues after a clear, machine-readable refusal.**
 

@@ -1,4 +1,4 @@
-# Semantic Deterrence
+# Semantic Deterrence: An Open Experiment for the Agentic Web
 
 **An open WordPress experiment and aggregate service for measuring whether suspicious automated probing continues after a clear refusal.**
 
