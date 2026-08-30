@@ -138,6 +138,7 @@ class Atshift_Semantic_Deterrence_Plugin {
 				array(
 					'series_hmac'          => $series_hmac,
 					'source_hmac'          => $source_hmac,
+					'country_code'         => $this->get_local_country_code( $settings ),
 					'category'             => $category,
 					'level'                => $level,
 					'variant'              => $variant,
@@ -154,6 +155,15 @@ class Atshift_Semantic_Deterrence_Plugin {
 		if ( $responded ) {
 			$this->send_deterrence_response( $status, $variant, $settings );
 		}
+	}
+
+	private function get_local_country_code( $settings ) {
+		if ( 'cloudflare' !== ( $settings['country_header_source'] ?? 'disabled' ) ) {
+			return '';
+		}
+
+		$country_code = isset( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ? strtoupper( sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ) ) : '';
+		return preg_match( '/^(?:[A-Z]{2}|T1)$/', $country_code ) ? $country_code : '';
 	}
 
 	private function maybe_share_anonymous_batch() {

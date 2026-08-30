@@ -14,7 +14,7 @@ class Atshift_Semantic_Deterrence_Storage {
 	const OPTION_SECRET   = 'atshift_semantic_deterrence_secret';
 	const OPTION_HUB_SECRET = 'atshift_semantic_deterrence_hub_secret';
 	const OPTION_SCHEMA_VERSION = 'atshift_semantic_deterrence_schema_version';
-	const SCHEMA_VERSION = 3;
+	const SCHEMA_VERSION = 4;
 	const OUTCOME_UNKNOWN = 'unknown';
 
 	/** @var wpdb */
@@ -37,6 +37,7 @@ class Atshift_Semantic_Deterrence_Storage {
 			'excluded_ips'          => '',
 			'excluded_paths'        => "/.well-known/security.txt\n/wp-json/\n/wp-admin/admin-ajax.php",
 			'custom_high_confidence_paths' => '',
+			'country_header_source' => 'disabled',
 			'local_detail_log'      => '0',
 			'sharing_enabled'       => '0',
 			'aggregate_read_enabled' => '0',
@@ -93,6 +94,7 @@ class Atshift_Semantic_Deterrence_Storage {
 		$settings['excluded_ips']        = sanitize_textarea_field( $settings['excluded_ips'] );
 		$settings['excluded_paths']      = sanitize_textarea_field( $settings['excluded_paths'] );
 		$settings['custom_high_confidence_paths'] = sanitize_textarea_field( $settings['custom_high_confidence_paths'] );
+		$settings['country_header_source'] = in_array( $settings['country_header_source'], array( 'disabled', 'cloudflare' ), true ) ? $settings['country_header_source'] : 'disabled';
 		$settings['local_detail_log']    = empty( $settings['local_detail_log'] ) ? '0' : '1';
 		$settings['sharing_enabled']     = empty( $settings['sharing_enabled'] ) ? '0' : '1';
 		$settings['aggregate_read_enabled'] = empty( $settings['aggregate_read_enabled'] ) ? '0' : '1';
@@ -178,6 +180,7 @@ class Atshift_Semantic_Deterrence_Storage {
 			observed_date date NOT NULL,
 			series_hmac char(64) NOT NULL,
 			source_hmac char(64) NOT NULL DEFAULT '',
+			country_code char(2) NOT NULL DEFAULT '',
 			category varchar(40) NOT NULL,
 			level tinyint(3) unsigned NOT NULL DEFAULT 0,
 			variant varchar(40) NOT NULL,
@@ -197,6 +200,7 @@ class Atshift_Semantic_Deterrence_Storage {
 			KEY observed_date (observed_date),
 			KEY series_hmac (series_hmac),
 			KEY source_hmac (source_hmac),
+			KEY country_code (country_code),
 			KEY outcome (outcome),
 			KEY variant_category (variant, category),
 			KEY experiment_arm (experiment_arm),
@@ -223,6 +227,7 @@ class Atshift_Semantic_Deterrence_Storage {
 			'observed_date'  => current_time( 'Y-m-d' ),
 			'series_hmac'    => '',
 			'source_hmac'    => '',
+			'country_code'   => '',
 			'category'       => 'other_high_confidence',
 			'level'          => 0,
 			'variant'        => 'observe_only',
@@ -238,7 +243,11 @@ class Atshift_Semantic_Deterrence_Storage {
 			'window_ends_at' => gmdate( 'Y-m-d H:i:s', current_time( 'timestamp' ) + 10 * MINUTE_IN_SECONDS ),
 			'last_seen_at'   => null,
 		);
-		$event    = wp_parse_args( $event, $defaults );
+		$event        = wp_parse_args( $event, $defaults );
+		$country_code = strtoupper( sanitize_text_field( $event['country_code'] ) );
+		if ( ! preg_match( '/^(?:[A-Z]{2}|T1)$/', $country_code ) ) {
+			$country_code = '';
+		}
 
 		$this->wpdb->insert(
 			$this->table_name(),
@@ -247,6 +256,7 @@ class Atshift_Semantic_Deterrence_Storage {
 				'observed_date'   => sanitize_text_field( $event['observed_date'] ),
 				'series_hmac'     => sanitize_text_field( $event['series_hmac'] ),
 				'source_hmac'     => sanitize_text_field( $event['source_hmac'] ),
+				'country_code'    => $country_code,
 				'category'        => sanitize_key( $event['category'] ),
 				'level'           => absint( $event['level'] ),
 				'variant'         => sanitize_key( $event['variant'] ),
@@ -262,7 +272,7 @@ class Atshift_Semantic_Deterrence_Storage {
 				'window_ends_at'  => sanitize_text_field( $event['window_ends_at'] ),
 				'last_seen_at'    => $event['last_seen_at'] ? sanitize_text_field( $event['last_seen_at'] ) : null,
 			),
-			array( '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s' )
+			array( '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s' )
 		);
 
 		return (int) $this->wpdb->insert_id;
@@ -418,6 +428,85 @@ class Atshift_Semantic_Deterrence_Storage {
 		}
 
 		return $summary;
+	}
+
+	public function get_local_activity_counts() {
+		$table         = $this->table_name();
+		$one_hour_ago  = current_datetime()->modify( '-1 hour' )->format( 'Y-m-d H:i:s' );
+		$day_ago       = current_datetime()->modify( '-24 hours' )->format( 'Y-m-d H:i:s' );
+		$row           = $this->wpdb->get_row(
+			$this->wpdb->prepare(
+				"SELECT
+					SUM(CASE WHEN created_at >= %s THEN 1 ELSE 0 END) AS one_hour,
+					SUM(CASE WHEN created_at >= %s THEN 1 ELSE 0 END) AS twenty_four_hours
+				FROM {$table}
+				WHERE created_at >= %s",
+				$one_hour_ago,
+				$day_ago,
+				$day_ago
+			),
+			ARRAY_A
+		);
+
+		return array(
+			'one_hour'          => absint( $row['one_hour'] ?? 0 ),
+			'twenty_four_hours' => absint( $row['twenty_four_hours'] ?? 0 ),
+		);
+	}
+
+	public function get_hourly_activity( $hours = 24 ) {
+		$table = $this->table_name();
+		$hours = min( 48, max( 1, absint( $hours ) ) );
+		$end   = current_datetime()->setTime( absint( current_datetime()->format( 'H' ) ), 0, 0 );
+		$start = $end->modify( '-' . ( $hours - 1 ) . ' hours' );
+		$rows  = $this->wpdb->get_results(
+			$this->wpdb->prepare(
+				"SELECT DATE_FORMAT(created_at, '%%Y-%%m-%%d %%H:00:00') AS hour_bucket, COUNT(*) AS event_count
+				FROM {$table}
+				WHERE created_at >= %s
+				GROUP BY hour_bucket
+				ORDER BY hour_bucket ASC",
+				$start->format( 'Y-m-d H:i:s' )
+			),
+			ARRAY_A
+		);
+		$counts = array();
+		foreach ( (array) $rows as $row ) {
+			$counts[ $row['hour_bucket'] ] = absint( $row['event_count'] );
+		}
+
+		$activity = array();
+		for ( $index = 0; $index < $hours; $index++ ) {
+			$hour       = $start->modify( '+' . $index . ' hours' );
+			$bucket     = $hour->format( 'Y-m-d H:00:00' );
+			$activity[] = array(
+				'label' => $hour->format( 'H:00' ),
+				'count' => $counts[ $bucket ] ?? 0,
+			);
+		}
+
+		return $activity;
+	}
+
+	public function get_country_activity( $hours = 24, $limit = 8 ) {
+		$table = $this->table_name();
+		$since = current_datetime()->modify( '-' . min( 168, max( 1, absint( $hours ) ) ) . ' hours' )->format( 'Y-m-d H:i:s' );
+		$limit = min( 20, max( 1, absint( $limit ) ) );
+
+		return $this->wpdb->get_results(
+			$this->wpdb->prepare(
+				"SELECT country_code, COUNT(*) AS event_count
+				FROM {$table}
+				WHERE created_at >= %s
+					AND country_code <> ''
+				GROUP BY country_code
+				ORDER BY event_count DESC, country_code ASC
+				LIMIT %d",
+				$since,
+				$limit
+			),
+			ARRAY_A
+		);
 	}
 
 	public function get_variant_stats( $days = 30 ) {

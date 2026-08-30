@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: atshift Semantic Deterrence 0.1.1\n"
+"Project-Id-Version: atshift Semantic Deterrence 0.1.2\n"
 "Report-Msgid-Bugs-To: https://github.com/at-shift/atshift-semantic-"
 "deterrence/issues\n"
-"POT-Creation-Date: 2026-08-28 16:03+0900\n"
+"POT-Creation-Date: 2026-08-31 04:27+0900\n"
 "PO-Revision-Date: 2026-08-28 00:00+0900\n"
 "Last-Translator: OpenAI Codex <noreply@example.com>\n"
 "Language-Team: Russian (Russia) <LL@li.org>\n"
@@ -22,19 +22,19 @@ msgstr ""
 
 #. translators: 1: Response option label, 2: Experiment arm label, 3: percentage, 4: event count.
 #. translators: 1: Response label, 2: experiment arm, 3: percentage, 4: event count.
-#: includes/class-atshift-semantic-deterrence-admin.php:1094
-#: includes/class-atshift-semantic-deterrence-admin.php:1114
+#: includes/class-atshift-semantic-deterrence-admin.php:1181
+#: includes/class-atshift-semantic-deterrence-admin.php:1201
 #, php-format
 msgid "%1$s / %2$s (%3$.1f%%, n=%4$d)"
 msgstr "%1$s / %2$s (%3$.1f%%, n=%4$d)"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:428
+#: includes/class-atshift-semantic-deterrence-admin.php:466
 msgid "(通常403の対照群です。意味的抑止の本文は返しません。)"
 msgstr ""
 "(Это контрольная группа с обычным ответом 403. Текст семантического "
 "сдерживания не возвращается.)"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:816
+#: includes/class-atshift-semantic-deterrence-admin.php:864
 msgid "1 / 3"
 msgstr "1 / 3"
 
@@ -42,7 +42,7 @@ msgstr "1 / 3"
 msgid "1. 方針通知"
 msgstr "1. Уведомление о политике"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:593
+#: includes/class-atshift-semantic-deterrence-admin.php:631
 msgid ""
 "1行に1つのパス前方一致を指定します。一致したものは other_high_confidence とし"
 "て扱います。正当なサイト固有エンドポイントは除外パスへ入れてください。"
@@ -51,7 +51,7 @@ msgstr ""
 "обрабатываться как other_high_confidence. Добавьте допустимые конечные "
 "точки, характерные для этого сайта, в исключенные пути."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:586
+#: includes/class-atshift-semantic-deterrence-admin.php:624
 msgid ""
 "1行に1つのパス前方一致を指定します。一致したリクエストは記録もレスポンス変更"
 "もしません。"
@@ -59,14 +59,14 @@ msgstr ""
 "Укажите по одному префиксу пути в каждой строке. Совпавшие запросы не "
 "записываются, а ответы на них не изменяются."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:600
+#: includes/class-atshift-semantic-deterrence-admin.php:638
 msgid ""
 "1行に1つの完全一致IPを指定します。IPはローカル除外とHMAC生成にだけ使います。"
 msgstr ""
 "Укажите по одному точному IP в каждой строке. IP используется только для "
 "локальных исключений и создания HMAC."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:826
+#: includes/class-atshift-semantic-deterrence-admin.php:874
 msgid "2 / 3"
 msgstr "2 / 3"
 
@@ -74,7 +74,11 @@ msgstr "2 / 3"
 msgid "2. 検知とローカル記録の通知"
 msgstr "2. Уведомление об обнаружении и локальной записи"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:836
+#: includes/class-atshift-semantic-deterrence-admin.php:276
+msgid "24時間の推移"
+msgstr "Динамика за 24 часа"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:884
 msgid "3 / 3"
 msgstr "3 / 3"
 
@@ -82,7 +86,7 @@ msgstr "3 / 3"
 msgid "3. 継続しても得るものが少ない通知"
 msgstr "3. Уведомление о низкой ценности дальнейшего сканирования"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:280
+#: includes/class-atshift-semantic-deterrence-admin.php:318
 msgid "30日"
 msgstr "30 дней"
 
@@ -98,58 +102,64 @@ msgstr "5. Комбинированное уведомление"
 msgid "5分ごと"
 msgstr "Каждые 5 минут"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:279
+#: includes/class-atshift-semantic-deterrence-admin.php:317
 msgid "7日"
 msgstr "7 дней"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:281
+#: includes/class-atshift-semantic-deterrence-admin.php:319
 msgid "90日"
 msgstr "90 дней"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:157
-msgid "Experimentの動作"
-msgstr "Работа режима Experiment"
+#: includes/class-atshift-semantic-deterrence-admin.php:646
+msgid "Cloudflareの国・地域コードを使う"
+msgstr "Использовать код страны/региона Cloudflare"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:548
+#: includes/class-atshift-semantic-deterrence-admin.php:648
 msgid ""
-"Experimentモードでだけ使います。統計の確度を守るため、実験開始後は固定され、"
-"途中の成績では変えません。"
+"Cloudflare経由であることを確認したサイトだけで有効にしてください。CF-"
+"IPCountryの2文字コードだけをローカル保存し、IPは保存しません。この情報はHubへ"
+"送信しません。"
 msgstr ""
-"Используется только в режиме Experiment. Для сохранения статистической "
-"достоверности значение фиксируется после начала эксперимента и не меняется "
-"на основании промежуточных результатов."
+"Включайте только для сайтов, которые точно работают через Cloudflare. "
+"Локально сохраняется только двухбуквенный код CF-IPCountry; IP-адреса не "
+"сохраняются. Эти данные не отправляются в Hub."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:298
+#: includes/class-atshift-semantic-deterrence-admin.php:336
+#: includes/class-atshift-semantic-deterrence-admin.php:1060
 msgid "HTTP"
 msgstr "HTTP"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:611
+#: includes/class-atshift-semantic-deterrence-admin.php:659
 msgid "Hub URL"
 msgstr "Hub URL"
 
-#: includes/class-atshift-semantic-deterrence-plugin.php:166
+#: includes/class-atshift-semantic-deterrence-plugin.php:176
 msgid "Hub URL、Key ID、共有秘密鍵が必要です。"
 msgstr "Требуются Hub URL, Key ID и общий секретный ключ."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:607
+#: includes/class-atshift-semantic-deterrence-admin.php:655
 msgid "Hub接続"
 msgstr "Подключение к Hub"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:618
+#: includes/class-atshift-semantic-deterrence-admin.php:666
 msgid "Key ID"
 msgstr "Key ID"
 
 #: includes/class-atshift-semantic-deterrence-admin.php:30
 #: includes/class-atshift-semantic-deterrence-admin.php:31
 #: includes/class-atshift-semantic-deterrence-admin.php:103
-#: includes/class-atshift-semantic-deterrence-admin.php:205
-#: includes/class-atshift-semantic-deterrence-admin.php:469
+#: includes/class-atshift-semantic-deterrence-admin.php:208
+#: includes/class-atshift-semantic-deterrence-admin.php:507
 msgid "Semantic Deterrence"
 msgstr "Semantic Deterrence"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:916
+#: includes/class-atshift-semantic-deterrence-admin.php:964
 msgid "Semantic Deterrence の画面"
 msgstr "Экраны Semantic Deterrence"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1004
+msgid "Torネットワーク"
+msgstr "Сеть Tor"
 
 #: includes/class-atshift-semantic-deterrence-admin.php:113
 msgid "v0.1 試験運用"
@@ -163,7 +173,7 @@ msgstr ""
 "Не утверждайте, что «атака остановлена» или «обнаружен ИИ». Используйте "
 "формулировку «после предупреждения продолжение сканирования не наблюдалось»."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:247
+#: includes/class-atshift-semantic-deterrence-admin.php:250
 msgid ""
 "このWordPressサイト内で観測したローカル集計です。共有Hubの集計や他サイトの結"
 "果は含みません。"
@@ -171,23 +181,100 @@ msgstr ""
 "Это локальные агрегированные данные, полученные на этом сайте WordPress. Они "
 "не включают данные общего Hub или результаты других сайтов."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:317
+#: includes/class-atshift-semantic-deterrence-admin.php:266
+msgid "このサイトだけの参考観測"
+msgstr "Наблюдения этого сайта"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:355
 msgid ""
 "このサイトで返した応答ごとの推定効果です。共有Hubの集計とは分けて表示します。"
 msgstr ""
 "Это оценка эффективности каждого ответа, возвращенного этим сайтом. Она "
 "показывается отдельно от агрегированных данных общего Hub."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:563
-#: includes/class-atshift-semantic-deterrence-admin.php:845
+#: includes/class-atshift-semantic-deterrence-admin.php:601
+#: includes/class-atshift-semantic-deterrence-admin.php:893
 msgid "このサイトの匿名集計を日次で提供する"
 msgstr "Ежедневно предоставлять анонимные агрегированные данные этого сайта"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:354
+msgid "このサイトの応答別比較"
+msgstr "Сравнение ответов этого сайта"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:326
+msgid "このサイトの直近観測"
+msgstr "Последние наблюдения этого сайта"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:217
+msgid "このサイトの観測"
+msgstr "Наблюдения этого сайта"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1211
+msgid "このサイトの観測のみ"
+msgstr "Только наблюдения этого сайта"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:301
+msgid "このサイトの観測期間別"
+msgstr "Наблюдения этого сайта по периодам"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:249
+msgid "このサイトの過去30日"
+msgstr "Последние 30 дней этого сайта"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1240
+msgid "このサイトを一時制限中"
+msgstr "На этом сайте действует временное ограничение"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1212
+msgid "このサイトを抑止"
+msgstr "Сдерживание на этом сайте"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1213
+msgid "このサイトを抑止 + 一時制限"
+msgstr "Сдерживание + временное ограничение на этом сайте"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:559
+msgid ""
+"このサイトを抑止しながら、固定カタログと対照群を使ったローカル応答実験を有効"
+"にする"
+msgstr ""
+"Включить локальный эксперимент с ответами на этом сайте с использованием "
+"фиксированного каталога и контрольной группы, одновременно применяя "
+"сдерживание"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:889
+msgid "このサイトを抑止しながらローカル応答実験に参加する"
+msgstr ""
+"Участвовать в локальном эксперименте с ответами, одновременно применяя "
+"сдерживание на этом сайте"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:859
+msgid "このサイトを抑止しながら実験に参加し、匿名集計データを提供しますか？"
+msgstr ""
+"Участвовать в эксперименте с локальными ответами сдерживания на этом сайте и "
+"предоставлять анонимные агрегированные данные?"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1214
+msgid "このサイトを抑止しながら実験参加"
+msgstr "Участие в эксперименте со сдерживанием на этом сайте"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1241
+msgid "このサイトを抑止しながら実験参加中"
+msgstr "На этом сайте идет эксперимент со сдерживанием"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1239
+msgid "このサイトを抑止中"
+msgstr "На этом сайте включено сдерживание"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1238
+msgid "このサイトを観測中"
+msgstr "На этом сайте ведется наблюдение"
 
 #: includes/class-atshift-semantic-deterrence-admin.php:110
 msgid "このプラグインで検証したいこと"
 msgstr "Что проверяет этот плагин"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:810
+#: includes/class-atshift-semantic-deterrence-admin.php:858
 msgid ""
 "このプラグインは、不審な自動探索へ意味的な応答を返した後に、探索継続を観測し"
 "たかを測定します。"
@@ -195,10 +282,10 @@ msgstr ""
 "Плагин измеряет, продолжилось ли сканирование после возврата семантического "
 "ответа на подозрительное автоматическое сканирование."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:216
+#: includes/class-atshift-semantic-deterrence-admin.php:219
 msgid ""
-"このプラグインは訪問者をAIと判定しません。不審な探索に自サイトの応答を返した"
-"後、探索が継続したかを測定します。"
+"このプラグインは訪問者をAIと判定しません。不審な探索にこのサイトの応答を返し"
+"た後、探索が継続したかを測定します。"
 msgstr ""
 "Плагин не определяет посетителей как ИИ. Он измеряет, продолжилось ли "
 "сканирование после того, как сайт вернул собственный ответ на подозрительное "
@@ -206,12 +293,12 @@ msgstr ""
 
 #: includes/class-atshift-semantic-deterrence-admin.php:99
 #: includes/class-atshift-semantic-deterrence-admin.php:187
-#: includes/class-atshift-semantic-deterrence-admin.php:463
+#: includes/class-atshift-semantic-deterrence-admin.php:501
 msgid "このプラグインを管理する権限がありません。"
 msgstr "У вас недостаточно прав для управления этим плагином."
 
 #. translators: %s: local datetime.
-#: includes/class-atshift-semantic-deterrence-admin.php:542
+#: includes/class-atshift-semantic-deterrence-admin.php:580
 #, php-format
 msgid ""
 "この割り当ては %s にロックされました。途中変更で比較が濁らないよう、このサイ"
@@ -220,8 +307,8 @@ msgstr ""
 "Это назначение зафиксировано %s. Его нельзя изменить на этом сайте, чтобы "
 "изменение в ходе эксперимента не исказило сравнение."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:671
-#: includes/class-atshift-semantic-deterrence-admin.php:710
+#: includes/class-atshift-semantic-deterrence-admin.php:719
+#: includes/class-atshift-semantic-deterrence-admin.php:758
 msgid "この設定を保存する権限がありません。"
 msgstr "У вас недостаточно прав для сохранения этой настройки."
 
@@ -243,24 +330,24 @@ msgstr ""
 "что нет ложных срабатываний или влияния на панель управления, REST API и "
 "Ajax."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:415
+#: includes/class-atshift-semantic-deterrence-admin.php:453
 msgid "まだ閾値未満"
 msgstr "Порог еще не достигнут"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:568
+#: includes/class-atshift-semantic-deterrence-admin.php:606
 msgid "アンインストール"
 msgstr "Удаление плагина"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:570
+#: includes/class-atshift-semantic-deterrence-admin.php:608
 msgid "アンインストール時にローカル集計データと設定を削除する"
 msgstr ""
 "Удалить локальные агрегированные данные и настройки при удалении плагина"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:363
+#: includes/class-atshift-semantic-deterrence-admin.php:401
 msgid "エージェントへ返す内容"
 msgstr "Что возвращается агенту"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:515
+#: includes/class-atshift-semantic-deterrence-admin.php:553
 msgid ""
 "クライアント間で比較できるよう、固定カタログ1〜5から選びます。自由文はv0.1の"
 "比較対象にしません。"
@@ -270,7 +357,7 @@ msgstr ""
 "в v0.1."
 
 #: includes/class-atshift-semantic-deterrence-admin.php:51
-#: includes/class-atshift-semantic-deterrence-admin.php:907
+#: includes/class-atshift-semantic-deterrence-admin.php:955
 msgid "ダッシュボード"
 msgstr "Консоль"
 
@@ -281,48 +368,49 @@ msgstr ""
 "наблюдения и наличие продолжения сканирования."
 
 #. translators: %s: Plugin version.
-#: includes/class-atshift-semantic-deterrence-plugin.php:399
+#: includes/class-atshift-semantic-deterrence-plugin.php:409
 #, php-format
 msgid "バージョン %s"
 msgstr "Версия %s"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:442
+#: includes/class-atshift-semantic-deterrence-admin.php:480
 msgid "ヘッダー"
 msgstr "Заголовки"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:482
+#: includes/class-atshift-semantic-deterrence-admin.php:520
 msgid "モード"
 msgstr "Режим"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:295
+#: includes/class-atshift-semantic-deterrence-admin.php:333
+#: includes/class-atshift-semantic-deterrence-admin.php:1050
 msgid "レベル"
 msgstr "Уровень"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:753
+#: includes/class-atshift-semantic-deterrence-admin.php:801
 msgid "ローカルデータを削除する権限がありません。"
 msgstr "У вас недостаточно прав для удаления локальных данных."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:648
+#: includes/class-atshift-semantic-deterrence-admin.php:696
 msgid "ローカルデータ操作"
 msgstr "Операции с локальными данными"
 
 #. translators: 1: Next local datetime, 2: jitter hours.
-#: includes/class-atshift-semantic-deterrence-admin.php:235
+#: includes/class-atshift-semantic-deterrence-admin.php:238
 #, php-format
 msgid "ローカル時刻 %1$s 前後。%2$d時間のジッター窓に分散します。"
 msgstr ""
 "Примерно в %1$s по местному времени. Отправка распределяется в пределах окна "
 "джиттера длительностью %2$d ч."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:772
+#: includes/class-atshift-semantic-deterrence-admin.php:820
 msgid "ローカル集計データをエクスポートする権限がありません。"
 msgstr "У вас недостаточно прав для экспорта локальных агрегированных данных."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:657
+#: includes/class-atshift-semantic-deterrence-admin.php:705
 msgid "ローカル集計データを削除"
 msgstr "Удалить локальные агрегированные данные"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:893
+#: includes/class-atshift-semantic-deterrence-admin.php:941
 msgid ""
 "ローカル集計データを削除し、観測のみへ戻しました。実験割り当ては再度選択でき"
 "ます。"
@@ -330,15 +418,15 @@ msgstr ""
 "Локальные агрегированные данные удалены, и восстановлен режим только "
 "наблюдения. Назначение для эксперимента можно выбрать снова."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:1014
+#: includes/class-atshift-semantic-deterrence-admin.php:1101
 msgid "一時制限"
 msgstr "Временное ограничение"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:553
+#: includes/class-atshift-semantic-deterrence-admin.php:591
 msgid "一時制限秒数"
 msgstr "Длительность временного ограничения в секундах"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:250
+#: includes/class-atshift-semantic-deterrence-admin.php:253
 msgid "不審な探索を検知"
 msgstr "Обнаружено подозрительное сканирование"
 
@@ -352,20 +440,26 @@ msgstr ""
 "отказ HTTP, но также машиночитаемое состояние и рекомендацию прекратить "
 "работу на естественном языке."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:273
-#: includes/class-atshift-semantic-deterrence-admin.php:327
+#: includes/class-atshift-semantic-deterrence-admin.php:311
+#: includes/class-atshift-semantic-deterrence-admin.php:365
+#: includes/class-atshift-semantic-deterrence-admin.php:382
+#: includes/class-atshift-semantic-deterrence-admin.php:1080
 msgid "不明"
 msgstr "Неизвестно"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1007
+msgid "不明な国・地域"
+msgstr "Неизвестная страна или регион"
 
 #: includes/class-atshift-semantic-deterrence-admin.php:176
 msgid "中央からは命令しない"
 msgstr "Без команд из центра"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:278
+#: includes/class-atshift-semantic-deterrence-admin.php:316
 msgid "今日"
 msgstr "Сегодня"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:289
+#: includes/class-atshift-semantic-deterrence-admin.php:327
 msgid ""
 "他のセキュリティ通知と時刻や分類を見比べるためのローカル観測です。このプラグ"
 "インはWAFログを読みません。IP、URL、User-Agent、Cookie、リクエスト本文は保存"
@@ -375,23 +469,24 @@ msgstr ""
 "категорий с другими уведомлениями безопасности. Плагин не читает журналы "
 "WAF. IP, URL, User-Agent, Cookie и тело запроса не сохраняются."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:324
+#: includes/class-atshift-semantic-deterrence-admin.php:362
+#: includes/class-atshift-semantic-deterrence-admin.php:379
 msgid "件数"
 msgstr "Количество"
 
 #. translators: %s: Plugin author.
-#: includes/class-atshift-semantic-deterrence-plugin.php:404
+#: includes/class-atshift-semantic-deterrence-plugin.php:414
 #, php-format
 msgid "作者: %s"
 msgstr "Автор: %s"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:625
+#: includes/class-atshift-semantic-deterrence-admin.php:673
 msgid "保存後は表示しません。匿名集計POSTのHMAC署名にだけ使います。"
 msgstr ""
 "После сохранения значение не отображается. Оно используется только для "
 "подписи HMAC анонимного агрегированного POST."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:624
+#: includes/class-atshift-semantic-deterrence-admin.php:672
 msgid "保存済み。変更時だけ入力"
 msgstr "Сохранено. Вводите только для изменения"
 
@@ -399,27 +494,29 @@ msgstr "Сохранено. Вводите только для изменени�
 msgid "共有について"
 msgstr "Об обмене данными"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:622
+#: includes/class-atshift-semantic-deterrence-admin.php:670
 msgid "共有秘密鍵"
 msgstr "Общий секретный ключ"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:414
+#: includes/class-atshift-semantic-deterrence-admin.php:452
 msgid "共有集計で高く見える応答"
 msgstr "Ответ с наилучшим результатом в общих агрегированных данных"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:396
+#: includes/class-atshift-semantic-deterrence-admin.php:434
 msgid "共有集計の参照"
 msgstr "Просмотр общих агрегированных данных"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:323
+#: includes/class-atshift-semantic-deterrence-admin.php:361
+#: includes/class-atshift-semantic-deterrence-admin.php:378
 msgid "内容識別"
 msgstr "Идентификатор содержимого"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:294
+#: includes/class-atshift-semantic-deterrence-admin.php:332
+#: includes/class-atshift-semantic-deterrence-admin.php:1049
 msgid "分類"
 msgstr "Категория"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:896
+#: includes/class-atshift-semantic-deterrence-admin.php:944
 msgid "初回確認を完了しました。設定はいつでも変更できます。"
 msgstr ""
 "Первоначальная проверка завершена. Настройки можно изменить в любое время."
@@ -428,7 +525,7 @@ msgstr ""
 msgid "初期状態"
 msgstr "Начальное состояние"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:817
+#: includes/class-atshift-semantic-deterrence-admin.php:865
 msgid "初期状態は観測のみ"
 msgstr "Начальное состояние: только наблюдение"
 
@@ -440,12 +537,12 @@ msgstr ""
 "По умолчанию выбран режим «Только наблюдение». Простая активация плагина не "
 "изменяет ответы HTTP."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:254
-#: includes/class-atshift-semantic-deterrence-admin.php:1013
+#: includes/class-atshift-semantic-deterrence-admin.php:257
+#: includes/class-atshift-semantic-deterrence-admin.php:1100
 msgid "判定不能"
 msgstr "Невозможно определить"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:1011
+#: includes/class-atshift-semantic-deterrence-admin.php:1098
 msgid "別分類で継続"
 msgstr "Продолжение в другой категории"
 
@@ -458,15 +555,15 @@ msgstr ""
 "только анонимные агрегированные данные без IP, URL, Cookie, тела запроса и "
 "домена."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:662
+#: includes/class-atshift-semantic-deterrence-admin.php:710
 msgid "匿名集計JSONをダウンロード"
 msgstr "Скачать анонимные агрегированные данные в формате JSON"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:821
+#: includes/class-atshift-semantic-deterrence-admin.php:869
 msgid "匿名集計の参照を有効にする"
 msgstr "Включить просмотр анонимных агрегированных данных"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:228
+#: includes/class-atshift-semantic-deterrence-admin.php:231
 msgid ""
 "匿名集計の提供はオプトイン時だけ日次ジッターで送信します。集計参照は提供に参"
 "加しなくても利用できます。"
@@ -475,7 +572,7 @@ msgstr ""
 "после согласия. Просматривать агрегированные данные можно без участия в их "
 "предоставлении."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:812
+#: includes/class-atshift-semantic-deterrence-admin.php:860
 msgid ""
 "参加しなくても、自分のサイトの状況確認と、集まった匿名集計データの参照は可能"
 "です。"
@@ -483,7 +580,7 @@ msgstr ""
 "Даже без участия можно проверять состояние своего сайта и просматривать "
 "собранные анонимные агрегированные данные."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:564
+#: includes/class-atshift-semantic-deterrence-admin.php:602
 msgid ""
 "参加しなくても集計の参照は可能です。提供する場合も、IP、URL、Cookie、本文、ド"
 "メインは送信しません。"
@@ -491,21 +588,25 @@ msgstr ""
 "Просматривать агрегированные данные можно и без участия. Даже при "
 "предоставлении данных не отправляются IP, URL, Cookie, тело запроса и домен."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:399
+#: includes/class-atshift-semantic-deterrence-admin.php:437
 msgid "参照停止中"
 msgstr "Просмотр отключен"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:399
+#: includes/class-atshift-semantic-deterrence-admin.php:437
 msgid "参照有効"
 msgstr "Просмотр включен"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:562
+#: includes/class-atshift-semantic-deterrence-admin.php:1252
+msgid "取得失敗"
+msgstr "Не удалось получить данные"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:600
 msgid "各クライアントが共有した匿名集計を参照する"
 msgstr ""
 "Просматривать анонимные агрегированные данные, предоставленные каждым "
 "клиентом"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:397
+#: includes/class-atshift-semantic-deterrence-admin.php:435
 msgid ""
 "各クライアントが提供した匿名集計を読み出します。中央からコード、強制遮断、強"
 "制設定は受け取りません。"
@@ -513,6 +614,10 @@ msgstr ""
 "Получает анонимные агрегированные данные, предоставленные каждым клиентом. "
 "Из центра не поступают код, принудительная блокировка или обязательные "
 "настройки."
+
+#: includes/class-atshift-semantic-deterrence-admin.php:302
+msgid "同じサイト内の観測を期間ごとに見ています。"
+msgstr "Наблюдения на этом сайте показаны по периодам."
 
 #: includes/class-atshift-semantic-deterrence-admin.php:165
 msgid ""
@@ -524,14 +629,9 @@ msgstr ""
 "предотвращает искажение измерений из-за смены текста в ходе "
 "последовательности."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:264
-msgid "同じ自サイト内の観測を期間ごとに見ています。"
-msgstr "Наблюдения на этом сайте показаны по периодам."
-
 #: includes/class-atshift-semantic-deterrence-admin.php:152
 msgid ""
-"問題がなければ、明示的にDeterrenceまたはExperimentへ切り替えて効果測定を始め"
-"ます。"
+"問題がなければ、明示的に抑止または実験参加へ切り替えて効果測定を始めます。"
 msgstr ""
 "Если проблем нет, явно переключитесь в режим Deterrence или Experiment, "
 "чтобы начать измерение эффективности."
@@ -540,34 +640,63 @@ msgstr ""
 msgid "固定カタログで比較"
 msgstr "Сравнение по фиксированному каталогу"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:1142
+#: includes/class-atshift-semantic-deterrence-admin.php:1229
 msgid "固定表示"
 msgstr "Фиксированное отображение"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:1134
+#: includes/class-atshift-semantic-deterrence-admin.php:1221
 msgid "固定表示と段階表示を混ぜる"
 msgstr "Сочетать фиксированное и поэтапное отображение"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:1133
+#: includes/class-atshift-semantic-deterrence-admin.php:1220
 msgid "固定表示のみ"
 msgstr "Только фиксированное отображение"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:838
+#: includes/class-atshift-semantic-deterrence-admin.php:642
+msgid "国・地域の参考表示"
+msgstr "Справочные данные по странам и регионам"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:283
 msgid ""
-"実験では自サイトの高確度な不審探索に応答しながら、通常403の対照群と5種類の固"
-"定応答を決め打ちで割り当てます。匿名提供ではIP、URL、Cookie、本文、ドメインを"
-"送りません。"
+"国・地域の参考表示は無効です。Cloudflare経由のサイトでは、高度な設定から有効"
+"にできます。"
+msgstr ""
+"Справочные данные по странам и регионам отключены. Для сайтов, работающих "
+"через Cloudflare, их можно включить в расширенных настройках."
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1251
+msgid "変更なし"
+msgstr "Без изменений"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:886
+msgid ""
+"実験ではこのサイトの高確度な不審探索に応答しながら、通常403の対照群と5種類の"
+"固定応答を決め打ちで割り当てます。匿名提供ではIP、URL、Cookie、本文、ドメイン"
+"を送りません。"
 msgstr ""
 "В эксперименте этот сайт локально отвечает на подозрительное сканирование с "
 "высокой достоверностью, используя заранее заданное распределение между "
 "контрольной группой с обычным ответом 403 и пятью фиксированными ответами. "
 "При анонимной передаче не отправляются IP, URL, Cookie, тело запроса и домен."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:519
+#: includes/class-atshift-semantic-deterrence-admin.php:157
+msgid "実験の動作"
+msgstr "Как работает режим эксперимента"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:557
 msgid "実験への参加"
 msgstr "Участие в эксперименте"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:368
+#: includes/class-atshift-semantic-deterrence-admin.php:586
+msgid ""
+"実験モードでだけ使います。統計の確度を守るため、実験開始後は固定され、途中の"
+"成績では変えません。"
+msgstr ""
+"Используется только в режиме Experiment. Для сохранения статистической "
+"достоверности значение фиксируется после начала эксперимента и не меняется "
+"на основании промежуточных результатов."
+
+#: includes/class-atshift-semantic-deterrence-admin.php:406
 msgid ""
 "実験モードでは、設定した割り当て戦略に従い、固定カタログと通常403の対照群を決"
 "め打ちで割り当てます。途中の成績で自動変更しません。"
@@ -576,15 +705,26 @@ msgstr ""
 "ответом 403 назначаются заранее в соответствии с выбранной стратегией. "
 "Назначение не меняется автоматически по промежуточным результатам."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:526
+#: includes/class-atshift-semantic-deterrence-admin.php:564
 msgid "実験割り当て"
 msgstr "Назначение для эксперимента"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:493
+#: includes/class-atshift-semantic-deterrence-admin.php:267
 msgid ""
-"実験参加: 自サイトでは高確度の不審探索へ意味的応答を返しながら、固定カタログ"
-"と通常403の対照群を使って測定します。同意した場合だけ匿名集計を共有し、様々な"
-"サイトでの結果を比較できるようにします。"
+"実験効果の判定とは分けたローカル参考情報です。記録間引き後の観測件数であり、"
+"実際の全リクエスト数ではありません。時間別件数と国・地域コードはHubへ送信しま"
+"せん。"
+msgstr ""
+"Это локальные справочные данные, не связанные с оценкой результатов "
+"эксперимента. Число наблюдений указано после прореживания записей и не "
+"равно общему числу запросов. Почасовые данные и коды стран/регионов не "
+"отправляются в Hub."
+
+#: includes/class-atshift-semantic-deterrence-admin.php:531
+msgid ""
+"実験参加: このサイトでは高確度の不審探索へ意味的応答を返しながら、固定カタロ"
+"グと通常403の対照群を使って測定します。同意した場合だけ匿名集計を共有し、様々"
+"なサイトでの結果を比較できるようにします。"
 msgstr ""
 "Участие в эксперименте: этот сайт локально возвращает семантические ответы "
 "на подозрительное сканирование с высокой достоверностью и проводит измерение "
@@ -592,11 +732,11 @@ msgstr ""
 "Анонимные агрегированные данные предоставляются только с вашего согласия, "
 "чтобы можно было сравнивать результаты разных сайтов."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:809
+#: includes/class-atshift-semantic-deterrence-admin.php:857
 msgid "実験参加と集計参照"
 msgstr "Участие в эксперименте и просмотр агрегированных данных"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:522
+#: includes/class-atshift-semantic-deterrence-admin.php:560
 msgid ""
 "実験参加モードを選んでも、このチェックを入れるまではHTTPレスポンスを変更しま"
 "せん。"
@@ -604,13 +744,15 @@ msgstr ""
 "Даже после выбора режима участия в эксперименте ответы HTTP не изменятся, "
 "пока вы не установите этот флажок."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:296
-#: includes/class-atshift-semantic-deterrence-admin.php:322
+#: includes/class-atshift-semantic-deterrence-admin.php:334
+#: includes/class-atshift-semantic-deterrence-admin.php:360
+#: includes/class-atshift-semantic-deterrence-admin.php:377
+#: includes/class-atshift-semantic-deterrence-admin.php:1051
 msgid "実験群"
 msgstr "Экспериментальная группа"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:430
-#: includes/class-atshift-semantic-deterrence-admin.php:1162
+#: includes/class-atshift-semantic-deterrence-admin.php:468
+#: includes/class-atshift-semantic-deterrence-admin.php:1261
 msgid "対照群: 通常403"
 msgstr "Контрольная группа: обычный ответ 403"
 
@@ -618,7 +760,7 @@ msgstr "Контрольная группа: обычный ответ 403"
 msgid "対照群との差を見る"
 msgstr "Сравнение с контрольной группой"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:231
+#: includes/class-atshift-semantic-deterrence-admin.php:234
 msgid "将来の日次共有予定:"
 msgstr "Планируемая ежедневная передача в будущем:"
 
@@ -631,31 +773,33 @@ msgstr ""
 "принятия решений. Из центра не поступают код, принудительная блокировка или "
 "обязательные настройки."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:1012
+#: includes/class-atshift-semantic-deterrence-admin.php:1099
 msgid "強い探索へ変化"
 msgstr "Переход к интенсивному сканированию"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:503
+#: includes/class-atshift-semantic-deterrence-admin.php:541
 msgid "強め"
 msgstr "Повышенная"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:297
+#: includes/class-atshift-semantic-deterrence-admin.php:335
+#: includes/class-atshift-semantic-deterrence-admin.php:1052
 msgid "応答"
 msgstr "Ответ"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:827
+#: includes/class-atshift-semantic-deterrence-admin.php:875
 msgid "応答変更は明示的に選ぶ"
 msgstr "Изменение ответов выбирается явно"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:333
+#: includes/class-atshift-semantic-deterrence-admin.php:371
 msgid "応答比較データはまだありません。"
 msgstr "Данных для сравнения ответов пока нет."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:321
+#: includes/class-atshift-semantic-deterrence-admin.php:359
+#: includes/class-atshift-semantic-deterrence-admin.php:376
 msgid "応答選択肢"
 msgstr "Варианты ответа"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:831
+#: includes/class-atshift-semantic-deterrence-admin.php:879
 msgid "意味的応答を有効にして開始する"
 msgstr "Включить семантические ответы и начать"
 
@@ -671,43 +815,43 @@ msgstr "Настройки семантического сдерживания"
 msgid "意味的抑止ダッシュボード"
 msgstr "Консоль семантического сдерживания"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:501
+#: includes/class-atshift-semantic-deterrence-admin.php:539
 msgid "慎重"
 msgstr "Осторожная"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:850
+#: includes/class-atshift-semantic-deterrence-admin.php:898
 msgid "戻る"
 msgstr "Назад"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:492
+#: includes/class-atshift-semantic-deterrence-admin.php:530
 msgid ""
-"抑止 + 一時制限: 自サイト内だけで意味的応答を返し、継続を観測した系列へRetry-"
-"Afterを返します。"
+"抑止 + 一時制限: このサイト内だけで意味的応答を返し、継続を観測した系列へ"
+"Retry-Afterを返します。"
 msgstr ""
 "Сдерживание + временное ограничение: семантические ответы возвращаются "
 "только локально этим сайтом, а для последовательностей, в которых "
 "наблюдается продолжение, возвращается Retry-After."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:556
+#: includes/class-atshift-semantic-deterrence-admin.php:594
 msgid "抑止 + 一時制限モードで、継続観測後に Retry-After として返す秒数です。"
 msgstr ""
 "Количество секунд, возвращаемое как Retry-After после обнаружения "
 "продолжения в режиме «Сдерживание + временное ограничение»."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:491
+#: includes/class-atshift-semantic-deterrence-admin.php:529
 msgid ""
-"抑止: 自サイト内だけで高確度の不審探索へ意味的応答を返し、その後の継続有無を"
-"測定します。"
+"抑止: このサイト内だけで高確度の不審探索へ意味的応答を返し、その後の継続有無"
+"を測定します。"
 msgstr ""
 "Сдерживание: этот сайт локально возвращает семантические ответы на "
 "подозрительное сканирование с высокой достоверностью и затем измеряет, "
 "продолжилось ли оно."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:837
+#: includes/class-atshift-semantic-deterrence-admin.php:885
 msgid "抑止しながら実験参加"
 msgstr "Участие в эксперименте со сдерживанием"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:828
+#: includes/class-atshift-semantic-deterrence-admin.php:876
 msgid ""
 "抑止を有効にすると、高確度の不審探索へ403と固定カタログの撤退勧告を返します。"
 "WAFやレート制限の代替ではありません。"
@@ -716,19 +860,31 @@ msgstr ""
 "достоверностью возвращаются ответ 403 и рекомендация прекратить работу из "
 "фиксированного каталога. Это не замена WAF или ограничению частоты запросов."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:438
+#: includes/class-atshift-semantic-deterrence-admin.php:476
 msgid "指紋"
 msgstr "Отпечаток"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:253
+#: includes/class-atshift-semantic-deterrence-admin.php:256
 msgid "探索継続を観測"
 msgstr "Наблюдалось продолжение сканирования"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:255
+#: includes/class-atshift-semantic-deterrence-admin.php:280
+msgid "接続元として観測された国・地域"
+msgstr "Страны и регионы, наблюдавшиеся как источники подключений"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:258
 msgid "推定継続非観測率"
 msgstr "Расчетная доля случаев без наблюдаемого продолжения"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:614
+#: includes/class-atshift-semantic-deterrence-admin.php:281
+msgid ""
+"攻撃者の所在地を断定するものではありません。プロキシやVPNの出口を示す場合があ"
+"ります。"
+msgstr ""
+"Эти данные не позволяют точно определить местонахождение злоумышленника. "
+"Они могут указывать на выходной узел прокси или VPN."
+
+#: includes/class-atshift-semantic-deterrence-admin.php:662
 msgid ""
 "既定値は https://aggregate.at-shift.net です。中央から命令やコードは受け取り"
 "ません。"
@@ -736,41 +892,46 @@ msgstr ""
 "Значение по умолчанию: https://aggregate.at-shift.net. Команды и код из "
 "центра не поступают."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:632
+#: includes/class-atshift-semantic-deterrence-admin.php:680
 msgid "日次送信を固定時刻へ集中させないため、サイトごとのシードで分散します。"
 msgstr ""
 "Чтобы ежедневные отправки не приходились на одно фиксированное время, они "
 "распределяются на основе уникального значения сайта."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:947
+#: includes/class-atshift-semantic-deterrence-admin.php:1034
 msgid "旧形式の応答"
 msgstr "Ответ прежнего формата"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:293
+#: includes/class-atshift-semantic-deterrence-admin.php:331
+#: includes/class-atshift-semantic-deterrence-admin.php:1048
 msgid "時刻"
 msgstr "Время"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1250
+msgid "更新済み"
+msgstr "Обновлено"
 
 #: includes/class-atshift-semantic-deterrence-admin.php:147
 msgid "最初の使い方"
 msgstr "Начало работы"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:808
+#: includes/class-atshift-semantic-deterrence-admin.php:856
 msgid "最初の確認"
 msgstr "Первоначальная проверка"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:868
+#: includes/class-atshift-semantic-deterrence-admin.php:916
 msgid "最終共有:"
 msgstr "Последняя передача:"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:409
+#: includes/class-atshift-semantic-deterrence-admin.php:447
 msgid "最終取得"
 msgstr "Последнее получение"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:875
+#: includes/class-atshift-semantic-deterrence-admin.php:923
 msgid "最終集計取得:"
 msgstr "Последнее получение агрегированных данных:"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:818
+#: includes/class-atshift-semantic-deterrence-admin.php:866
 msgid ""
 "有効化しただけではHTTPレスポンスを変更しません。まずは検知件数、分類、警告後"
 "の継続有無をローカルに測定します。"
@@ -778,46 +939,48 @@ msgstr ""
 "Простая активация не изменяет ответы HTTP. Сначала локально измеряются "
 "количество обнаружений, категории и наличие продолжения после предупреждения."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:268
+#: includes/class-atshift-semantic-deterrence-admin.php:306
+#: includes/class-atshift-semantic-deterrence-admin.php:1075
 msgid "期間"
 msgstr "Период"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:405
+#: includes/class-atshift-semantic-deterrence-admin.php:1249
 msgid "未取得"
 msgstr "Не получено"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:410
-#: includes/class-atshift-semantic-deterrence-admin.php:869
-#: includes/class-atshift-semantic-deterrence-admin.php:876
+#: includes/class-atshift-semantic-deterrence-admin.php:448
+#: includes/class-atshift-semantic-deterrence-admin.php:917
+#: includes/class-atshift-semantic-deterrence-admin.php:924
 msgid "未実行"
 msgstr "Не выполнено"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:624
+#: includes/class-atshift-semantic-deterrence-admin.php:672
 msgid "未設定"
 msgstr "Не настроено"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:446
+#: includes/class-atshift-semantic-deterrence-admin.php:484
 msgid "本文"
 msgstr "Тело"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:269
+#: includes/class-atshift-semantic-deterrence-admin.php:307
+#: includes/class-atshift-semantic-deterrence-admin.php:1076
 msgid "検知"
 msgstr "Обнаружение"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:498
+#: includes/class-atshift-semantic-deterrence-admin.php:536
 msgid "検知感度"
 msgstr "Чувствительность обнаружения"
 
 #: includes/class-atshift-semantic-deterrence-admin.php:42
-#: includes/class-atshift-semantic-deterrence-admin.php:903
+#: includes/class-atshift-semantic-deterrence-admin.php:951
 msgid "概要"
 msgstr "Обзор"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:502
+#: includes/class-atshift-semantic-deterrence-admin.php:540
 msgid "標準"
 msgstr "Стандартная"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:608
+#: includes/class-atshift-semantic-deterrence-admin.php:656
 msgid ""
 "標準の集計Hub以外で集めたい場合、または別の実験用Hubへ接続する場合の設定で"
 "す。参照だけなら共有秘密鍵は不要です。匿名集計を提供する場合だけ、Key IDと共"
@@ -829,19 +992,19 @@ msgstr ""
 "анонимных агрегированных данных они подписываются с помощью Key ID и общего "
 "секретного ключа."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:851
+#: includes/class-atshift-semantic-deterrence-admin.php:899
 msgid "次へ"
 msgstr "Далее"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:864
+#: includes/class-atshift-semantic-deterrence-admin.php:912
 msgid "次回共有予定:"
 msgstr "Следующая запланированная передача:"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:1143
+#: includes/class-atshift-semantic-deterrence-admin.php:1230
 msgid "段階表示"
 msgstr "Поэтапное отображение"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:1135
+#: includes/class-atshift-semantic-deterrence-admin.php:1222
 msgid "段階表示のみ"
 msgstr "Только поэтапное отображение"
 
@@ -853,17 +1016,26 @@ msgstr "Проверка поэтапного отображения"
 msgid "測定すること"
 msgstr "Что измеряется"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:1026
-#: includes/class-atshift-semantic-deterrence-admin.php:1059
-#: includes/class-atshift-semantic-deterrence-admin.php:1089
+#: includes/class-atshift-semantic-deterrence-admin.php:1113
+#: includes/class-atshift-semantic-deterrence-admin.php:1146
+#: includes/class-atshift-semantic-deterrence-admin.php:1176
 msgid "測定中"
 msgstr "Идет измерение"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:328
+#: includes/class-atshift-semantic-deterrence-admin.php:645
+msgid "無効"
+msgstr "Отключено"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:1253
+msgid "無効な応答"
+msgstr "Недопустимый ответ"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:366
+#: includes/class-atshift-semantic-deterrence-admin.php:383
 msgid "率"
 msgstr "Доля"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:366
+#: includes/class-atshift-semantic-deterrence-admin.php:404
 msgid ""
 "現在は観測のみのため、不審リクエストのレスポンスは変更しません。下のプレ"
 "ビューは、抑止を有効にした場合に返す内容です。"
@@ -872,15 +1044,31 @@ msgstr ""
 "запросы не изменяются. Ниже показан предварительный просмотр содержимого, "
 "которое будет возвращаться после включения сдерживания."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:257
+#: includes/class-atshift-semantic-deterrence-admin.php:260
 msgid "現在もっとも有効と推定される応答"
 msgstr "Ответ с наиболее высокой предполагаемой эффективностью"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:305
+#: includes/class-atshift-semantic-deterrence-admin.php:272
+msgid "直近1時間の観測"
+msgstr "Наблюдения за последний час"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:285
+msgid "直近24時間に国・地域コード付きの観測はありません。"
+msgstr "За последние 24 часа нет наблюдений с кодом страны или региона."
+
+#: includes/class-atshift-semantic-deterrence-admin.php:987
+msgid "直近24時間の時間別観測件数"
+msgstr "Почасовое число наблюдений за последние 24 часа"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:273
+msgid "直近24時間の観測"
+msgstr "Наблюдения за последние 24 часа"
+
+#: includes/class-atshift-semantic-deterrence-admin.php:343
 msgid "直近の観測はまだありません。"
 msgstr "Недавних наблюдений пока нет."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:852
+#: includes/class-atshift-semantic-deterrence-admin.php:900
 msgid "確認して開始"
 msgstr "Подтвердить и начать"
 
@@ -888,98 +1076,31 @@ msgstr "Подтвердить и начать"
 msgid "系列ごとの割り当て"
 msgstr "Назначение по последовательностям"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:299
+#: includes/class-atshift-semantic-deterrence-admin.php:337
+#: includes/class-atshift-semantic-deterrence-admin.php:1061
 msgid "結果"
 msgstr "Результат"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:272
-#: includes/class-atshift-semantic-deterrence-admin.php:326
-#: includes/class-atshift-semantic-deterrence-admin.php:1010
+#: includes/class-atshift-semantic-deterrence-admin.php:310
+#: includes/class-atshift-semantic-deterrence-admin.php:364
+#: includes/class-atshift-semantic-deterrence-admin.php:381
+#: includes/class-atshift-semantic-deterrence-admin.php:1079
+#: includes/class-atshift-semantic-deterrence-admin.php:1097
 msgid "継続"
 msgstr "Продолжение"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:271
-#: includes/class-atshift-semantic-deterrence-admin.php:325
-#: includes/class-atshift-semantic-deterrence-admin.php:1009
+#: includes/class-atshift-semantic-deterrence-admin.php:309
+#: includes/class-atshift-semantic-deterrence-admin.php:363
+#: includes/class-atshift-semantic-deterrence-admin.php:380
+#: includes/class-atshift-semantic-deterrence-admin.php:1078
+#: includes/class-atshift-semantic-deterrence-admin.php:1096
 msgid "継続なしを観測"
 msgstr "Продолжение не наблюдалось"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:300
+#: includes/class-atshift-semantic-deterrence-admin.php:338
+#: includes/class-atshift-semantic-deterrence-admin.php:1062
 msgid "継続数"
 msgstr "Количество продолжений"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:316
-msgid "自サイトの応答別比較"
-msgstr "Сравнение ответов этого сайта"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:288
-msgid "自サイトの直近観測"
-msgstr "Последние наблюдения этого сайта"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:214
-msgid "自サイトの観測"
-msgstr "Наблюдения этого сайта"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:1124
-msgid "自サイトの観測のみ"
-msgstr "Только наблюдения этого сайта"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:263
-msgid "自サイトの観測期間別"
-msgstr "Наблюдения этого сайта по периодам"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:246
-msgid "自サイトの過去30日"
-msgstr "Последние 30 дней этого сайта"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:1153
-msgid "自サイトを一時制限中"
-msgstr "На этом сайте действует временное ограничение"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:1125
-msgid "自サイトを抑止"
-msgstr "Сдерживание на этом сайте"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:1126
-msgid "自サイトを抑止 + 一時制限"
-msgstr "Сдерживание + временное ограничение на этом сайте"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:521
-msgid ""
-"自サイトを抑止しながら、固定カタログと対照群を使ったローカル応答実験を有効に"
-"する"
-msgstr ""
-"Включить локальный эксперимент с ответами на этом сайте с использованием "
-"фиксированного каталога и контрольной группы, одновременно применяя "
-"сдерживание"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:841
-msgid "自サイトを抑止しながらローカル応答実験に参加する"
-msgstr ""
-"Участвовать в локальном эксперименте с ответами, одновременно применяя "
-"сдерживание на этом сайте"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:811
-msgid "自サイトを抑止しながら実験に参加し、匿名集計データを提供しますか？"
-msgstr ""
-"Участвовать в эксперименте с локальными ответами сдерживания на этом сайте и "
-"предоставлять анонимные агрегированные данные?"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:1127
-msgid "自サイトを抑止しながら実験参加"
-msgstr "Участие в эксперименте со сдерживанием на этом сайте"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:1154
-msgid "自サイトを抑止しながら実験参加中"
-msgstr "На этом сайте идет эксперимент со сдерживанием"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:1152
-msgid "自サイトを抑止中"
-msgstr "На этом сайте включено сдерживание"
-
-#: includes/class-atshift-semantic-deterrence-admin.php:1151
-msgid "自サイトを観測中"
-msgstr "На этом сайте ведется наблюдение"
 
 #: includes/class-atshift-semantic-deterrence-admin.php:161
 msgid ""
@@ -990,28 +1111,28 @@ msgstr ""
 "ответом 403, без произвольного текста. Это позволяет позднее сравнивать "
 "результаты разных клиентов."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:970
+#: includes/class-atshift-semantic-deterrence-admin.php:1057
 msgid "観測のみ"
 msgstr "Только наблюдение"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:490
+#: includes/class-atshift-semantic-deterrence-admin.php:528
 msgid ""
-"観測のみ: 自サイト内だけで不審な探索を記録します。HTTPレスポンスは変更せず、"
-"匿名集計も提供しません。"
+"観測のみ: このサイト内だけで不審な探索を記録します。HTTPレスポンスは変更せ"
+"ず、匿名集計も提供しません。"
 msgstr ""
 "Только наблюдение: подозрительное сканирование записывается только локально "
 "на этом сайте. Ответы HTTP не изменяются, анонимные агрегированные данные не "
 "предоставляются."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:652
+#: includes/class-atshift-semantic-deterrence-admin.php:700
 msgid "観測窓を今すぐ確定"
 msgstr "Завершить окно наблюдения сейчас"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:890
+#: includes/class-atshift-semantic-deterrence-admin.php:938
 msgid "観測窓を確定しました。"
 msgstr "Окно наблюдения завершено."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:741
+#: includes/class-atshift-semantic-deterrence-admin.php:789
 msgid "観測窓を確定する権限がありません。"
 msgstr "У вас недостаточно прав для завершения окна наблюдения."
 
@@ -1020,9 +1141,9 @@ msgid "言わないこと"
 msgstr "Чего не следует утверждать"
 
 #: includes/class-atshift-semantic-deterrence-admin.php:60
-#: includes/class-atshift-semantic-deterrence-admin.php:476
-#: includes/class-atshift-semantic-deterrence-admin.php:911
-#: includes/class-atshift-semantic-deterrence-plugin.php:382
+#: includes/class-atshift-semantic-deterrence-admin.php:514
+#: includes/class-atshift-semantic-deterrence-admin.php:959
+#: includes/class-atshift-semantic-deterrence-plugin.php:392
 msgid "設定"
 msgstr "Настройки"
 
@@ -1042,15 +1163,16 @@ msgstr ""
 "фиксированном порядке. Порядок задан заранее и не меняется по промежуточным "
 "результатам."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:887
+#: includes/class-atshift-semantic-deterrence-admin.php:935
 msgid "設定を保存しました。"
 msgstr "Настройки сохранены."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:270
+#: includes/class-atshift-semantic-deterrence-admin.php:308
+#: includes/class-atshift-semantic-deterrence-admin.php:1077
 msgid "警告"
 msgstr "Предупреждение"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:251
+#: includes/class-atshift-semantic-deterrence-admin.php:254
 msgid "警告を返した件数"
 msgstr "Количество возвращенных предупреждений"
 
@@ -1063,27 +1185,27 @@ msgstr ""
 "продолжения после предупреждения, число продолжений, число неопределенных "
 "случаев и оценка эффективности каждого текста ответа."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:252
+#: includes/class-atshift-semantic-deterrence-admin.php:255
 msgid "警告後に継続を観測しなかった"
 msgstr "После предупреждения продолжение не наблюдалось"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:508
+#: includes/class-atshift-semantic-deterrence-admin.php:546
 msgid "返却文の選択"
 msgstr "Выбор текста ответа"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:629
+#: includes/class-atshift-semantic-deterrence-admin.php:677
 msgid "送信ジッター"
 msgstr "Джиттер отправки"
 
-#: includes/class-atshift-semantic-deterrence-plugin.php:180
+#: includes/class-atshift-semantic-deterrence-plugin.php:190
 msgid "送信対象の匿名集計はありません。"
 msgstr "Нет анонимных агрегированных данных для отправки."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:636
+#: includes/class-atshift-semantic-deterrence-admin.php:684
 msgid "通信状態"
 msgstr "Состояние подключения"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:256
+#: includes/class-atshift-semantic-deterrence-admin.php:259
 msgid "通常403との差"
 msgstr "Отличие от обычного ответа 403"
 
@@ -1096,7 +1218,7 @@ msgstr ""
 "отдельно, а разница отображается только после накопления достаточного "
 "количества случаев."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:1141
+#: includes/class-atshift-semantic-deterrence-admin.php:1228
 msgid "通常運用"
 msgstr "Обычная работа"
 
@@ -1104,27 +1226,27 @@ msgstr "Обычная работа"
 msgid "運用の前提"
 msgstr "Условия эксплуатации"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:597
+#: includes/class-atshift-semantic-deterrence-admin.php:635
 msgid "除外IP"
 msgstr "Исключенные IP"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:583
+#: includes/class-atshift-semantic-deterrence-admin.php:621
 msgid "除外パス"
 msgstr "Исключенные пути"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:560
+#: includes/class-atshift-semantic-deterrence-admin.php:598
 msgid "集計データ"
 msgstr "Агрегированные данные"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:404
+#: includes/class-atshift-semantic-deterrence-admin.php:442
 msgid "集計参照の状態"
 msgstr "Состояние просмотра агрегированных данных"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:580
+#: includes/class-atshift-semantic-deterrence-admin.php:618
 msgid "高度な設定"
 msgstr "Расширенные настройки"
 
-#: includes/class-atshift-semantic-deterrence-admin.php:370
+#: includes/class-atshift-semantic-deterrence-admin.php:408
 msgid ""
 "高確度の不審探索へ返すHTTP状態、機械可読な状態、自然言語の撤退勧告です。"
 msgstr ""
@@ -1132,9 +1254,12 @@ msgstr ""
 "естественном языке, возвращаемые при подозрительном сканировании с высокой "
 "достоверностью."
 
-#: includes/class-atshift-semantic-deterrence-admin.php:590
+#: includes/class-atshift-semantic-deterrence-admin.php:628
 msgid "高確度カスタムパス"
 msgstr "Пользовательские пути с высокой достоверностью"
+
+#~ msgid "Experimentの動作"
+#~ msgstr "Работа режима Experiment"
 
 #~ msgid "ローカル集計データを削除しました。実験割り当ては再度選択できます。"
 #~ msgstr ""

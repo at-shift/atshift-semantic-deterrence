@@ -4,7 +4,7 @@ Tags: security, 403, automation, firewall, privacy
 Requires at least: 6.4
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,7 +40,7 @@ atshift Semantic Deterrence は、不審な自動探索に対して明確な拒�
 
 この試作版は、初期状態では実験の測定データをプラグイン作者や集計 Hub へ送信しません。WordPress の通常の更新確認では、実験共有とは別に、公開されている GitHub Releases API へプラグインの最新版を問い合わせる場合があります。
 
-ローカル集計レコードには、時刻、検知カテゴリ、レベル、応答バリアント、実験群、応答カタログ ID、応答指紋、HTTP 状態、日次ソルト付き系列 HMAC、追跡件数、結果、プラグインバージョン、ポリシーバージョンが含まれます。
+ローカル集計レコードには、時刻、検知カテゴリ、レベル、応答バリアント、実験群、応答カタログ ID、応答指紋、HTTP 状態、日次ソルト付き系列 HMAC、追跡件数、結果、プラグインバージョン、ポリシーバージョンが含まれます。管理者がCloudflare連携を有効にした場合だけ、接続元として通知された2文字の国・地域コードもローカル保存します。
 
 ローカル集計レコードには、リクエスト本文、Cookie、認証ヘッダー、フォーム入力、完全な URL、URL クエリ値、平文 IP アドレス、平文 User-Agent、ドメイン、サイト名、管理者情報、WordPress ユーザーの個人情報は含まれません。
 
@@ -48,7 +48,7 @@ atshift Semantic Deterrence は、不審な自動探索に対して明確な拒�
 
 共有する項目は、ランダムな導入サイト仮名、スキーマ・プラグイン・ポリシーのバージョン、固定応答バリアント、実験群、応答カタログ ID、応答指紋、HTTP 状態、限定された検知カテゴリとレベル、結果、追跡時間帯、観測日、イベント件数、追跡件数です。個別リクエストではなく、同じ条件をまとめた集計行として送ります。
 
-共有しない項目は、生 IP、IP ハッシュ、ローカル系列 HMAC、URL、パス、クエリ、Cookie、認証情報、リクエスト本文、フォーム値、ドメイン、サイト名、管理者情報、メールアドレス、生 User-Agent、WordPress ユーザーデータ、ローカル詳細ログです。導入サイト仮名は期間比較に使う安定 ID であり、Hub 側でさらに HMAC 化してサイト別の認証情報へ結び付けるため、正確には仮名化集計データです。
+共有しない項目は、生 IP、IP ハッシュ、ローカル系列 HMAC、国・地域コード、時間別の参考集計、URL、パス、クエリ、Cookie、認証情報、リクエスト本文、フォーム値、ドメイン、サイト名、管理者情報、メールアドレス、生 User-Agent、WordPress ユーザーデータ、ローカル詳細ログです。導入サイト仮名は期間比較に使う安定 ID であり、Hub 側でさらに HMAC 化してサイト別の認証情報へ結び付けるため、正確には仮名化集計データです。
 
 Hub は、重複する日次スナップショットの置換、公開閾値の判定、不正または壊れた送信の検出、応答別・分類別・実験群別の横断比較に共有データを利用します。既定では 10 サイトかつ 100 イベントに達しない行を公開しません。公開 JSON はプラグイン利用者以外も取得できます。利用目的は、実験評価、実験設計の改善、誤検知分析、応答仮説の議論、標本数と不確実性を伴う集計報告です。訪問者や参加ドメインの特定、サイト別ランキング、広告プロファイル、見込み客販売、サイトの遠隔操作には利用しません。ただし公開集計であるため、第三者が取得済みの閾値通過結果を保存または再利用することを技術的には制御できません。
 
@@ -109,6 +109,11 @@ Data Sharing Scope And Use: https://github.com/at-shift/atshift-semantic-deterre
 初期状態では送信しません。匿名共有を有効にした場合だけ、日次ジッター付きで匿名集計を送信します。集計サーバは比較データの読み出し元であり、遠隔操作システムではありません。
 
 == Changelog ==
+
+= 0.1.2 =
+* Added local-only hourly activity and optional Cloudflare country or region reference views.
+* Improved mobile table layouts, Japanese wording, aggregate status labels, and dashboard typography.
+* Explicitly excluded local reference geography and hourly statistics from Hub sharing.
 
 = 0.1.1 =
 
