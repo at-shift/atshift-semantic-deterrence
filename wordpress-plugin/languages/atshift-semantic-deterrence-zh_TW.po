@@ -153,7 +153,7 @@ msgid "Torネットワーク"
 msgstr "Tor 網路"
 
 #: includes/class-atshift-semantic-deterrence-admin.php:113
-msgid "v0.1 試験運用"
+msgid "v0.1系 試験運用"
 msgstr "v0.1 試行"
 
 #: includes/class-atshift-semantic-deterrence-admin.php:137

@@ -110,7 +110,7 @@ class Atshift_Semantic_Deterrence_Admin {
 						<h2><?php esc_html_e( 'このプラグインで検証したいこと', 'atshift-semantic-deterrence' ); ?></h2>
 						<p><?php esc_html_e( '不審な自動探索に対して、通常のHTTP拒否だけでなく、機械可読な状態と自然言語の撤退勧告を返したとき、その後の探索継続が減るかを観測します。', 'atshift-semantic-deterrence' ); ?></p>
 					</div>
-					<span class="atsdn-mode-pill"><?php esc_html_e( 'v0.1 試験運用', 'atshift-semantic-deterrence' ); ?></span>
+					<span class="atsdn-mode-pill"><?php esc_html_e( 'v0.1系 試験運用', 'atshift-semantic-deterrence' ); ?></span>
 				</div>
 				<div class="atsdn-signal-strip" aria-hidden="true">
 					<span class="atsdn-signal atsdn-signal--observe"></span>
