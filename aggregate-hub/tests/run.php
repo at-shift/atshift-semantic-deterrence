@@ -91,4 +91,67 @@ try {
 	atsdn_test_assert( true, 'unsafe threshold rejected' );
 }
 
+$aggregate_db = new PDO( 'sqlite::memory:' );
+$aggregate_db->setAttribute( PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC );
+$aggregate_db->exec(
+	'CREATE TABLE atsdn_hub_events (
+		observed_date TEXT NOT NULL,
+		site_key_hash TEXT NOT NULL,
+		variant TEXT NOT NULL,
+		experiment_arm TEXT NOT NULL,
+		response_catalog_id TEXT NOT NULL,
+		response_fingerprint TEXT NOT NULL,
+		outcome TEXT NOT NULL,
+		event_count INTEGER NOT NULL,
+		follow_up_count INTEGER NOT NULL
+	)'
+);
+$aggregate_db->exec(
+	'CREATE TABLE atsdn_hub_cache (
+		cache_key TEXT PRIMARY KEY,
+		etag TEXT NOT NULL,
+		body_json TEXT NOT NULL,
+		generated_at TEXT NOT NULL,
+		expires_at TEXT NOT NULL
+	)'
+);
+$aggregate_db->exec( 'CREATE TABLE atsdn_hub_state (id INTEGER PRIMARY KEY, aggregate_generation INTEGER NOT NULL, updated_at TEXT NOT NULL)' );
+$aggregate_db->exec( "INSERT INTO atsdn_hub_state (id, aggregate_generation, updated_at) VALUES (1, 1, '2026-01-01 00:00:00')" );
+
+$insert = $aggregate_db->prepare(
+	'INSERT INTO atsdn_hub_events
+	(observed_date, site_key_hash, variant, experiment_arm, response_catalog_id, response_fingerprint, outcome, event_count, follow_up_count)
+	VALUES (:observed_date, :site_key_hash, :variant, :experiment_arm, :response_catalog_id, :response_fingerprint, :outcome, :event_count, 0)'
+);
+foreach ( range( 1, 10 ) as $site_number ) {
+	foreach (
+		array(
+			array( 'control_generic', 'control_generic:plain:recorded', 'observed_ceased', 6 ),
+			array( 'control_generic', 'control_generic:plain:recorded', 'continued_same', 4 ),
+			array( 'combined_notice', 'response_5_combined_notice:plain:recorded', 'observed_ceased', 8 ),
+			array( 'combined_notice', 'response_5_combined_notice:plain:recorded', 'continued_same', 2 ),
+		) as $aggregate_row
+	) {
+		$insert->execute(
+			array(
+				':observed_date'        => gmdate( 'Y-m-d' ),
+				':site_key_hash'        => hash( 'sha256', 'site-' . $site_number ),
+				':variant'              => $aggregate_row[0],
+				':experiment_arm'       => 'fixed_series',
+				':response_catalog_id'  => $aggregate_row[1],
+				':response_fingerprint' => hash( 'sha256', $aggregate_row[1] ),
+				':outcome'              => $aggregate_row[2],
+				':event_count'          => $aggregate_row[3],
+			)
+		);
+	}
+}
+
+$aggregate_hub = new Atshift_Semantic_Deterrence_Hub( $aggregate_db, $config );
+$current       = $aggregate_hub->handle( '/v1/aggregates/current', array( 'REQUEST_METHOD' => 'GET' ), '' );
+atsdn_test_assert( 200 === $current['code'], 'current aggregate endpoint should succeed' );
+atsdn_test_assert( 2 === count( $current['body']['variants'] ), 'current aggregate should include thresholded response comparisons' );
+atsdn_test_assert( 'combined_notice' === $current['body']['best_variant']['variant'], 'best response should exclude generic 403 control' );
+atsdn_test_assert( 80.0 === $current['body']['best_variant']['non_continuation_rate'], 'best response should expose the observed rate' );
+
 echo 'PASS Hub validation regression checks' . PHP_EOL;

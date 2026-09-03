@@ -7,7 +7,7 @@ It receives pseudonymous aggregate batches from opted-in client sites, stores th
 ## Endpoints
 
 - `POST /v1/events/batch/`
-- `GET /v1/aggregates/current/`
+- `GET /v1/aggregates/current/` (summary plus the cached thresholded response comparison rows)
 - `GET /v1/aggregates/variants/`
 - `POST /v1/site/revoke/`
 

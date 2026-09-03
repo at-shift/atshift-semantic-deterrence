@@ -321,6 +321,7 @@ class Atshift_Semantic_Deterrence_Plugin {
 			'generated_at'   => sanitize_text_field( $decoded['generated_at'] ?? '' ),
 			'days'           => min( 90, absint( $decoded['days'] ?? 0 ) ),
 			'best_variant'   => null,
+			'variants'       => array(),
 			'policy'         => array(
 				'remote_control'  => false,
 				'executable_code' => false,
@@ -337,6 +338,32 @@ class Atshift_Semantic_Deterrence_Plugin {
 					'variant'               => $variant,
 					'experiment_arm'        => $arm,
 					'total_events'          => min( 1000000000, absint( $decoded['best_variant']['total_events'] ?? 0 ) ),
+					'non_continuation_rate' => is_numeric( $rate ) ? min( 100, max( 0, (float) $rate ) ) : null,
+				);
+			}
+		}
+
+		if ( isset( $decoded['variants'] ) && is_array( $decoded['variants'] ) ) {
+			foreach ( array_slice( $decoded['variants'], 0, 100 ) as $row ) {
+				if ( ! is_array( $row ) ) {
+					continue;
+				}
+
+				$variant = sanitize_key( $row['variant'] ?? '' );
+				$arm     = sanitize_key( $row['experiment_arm'] ?? '' );
+				if ( ! in_array( $variant, Atshift_Semantic_Deterrence_Detector::get_variant_ids(), true ) || ! in_array( $arm, array( '', 'fixed_series', 'sequence_series' ), true ) ) {
+					continue;
+				}
+
+				$rate = $row['non_continuation_rate'] ?? null;
+				$normalized['variants'][] = array(
+					'variant'               => $variant,
+					'experiment_arm'        => $arm,
+					'site_count'            => min( 1000000000, absint( $row['site_count'] ?? 0 ) ),
+					'total_events'          => min( 1000000000, absint( $row['total_events'] ?? 0 ) ),
+					'observed_ceased'       => min( 1000000000, absint( $row['observed_ceased'] ?? 0 ) ),
+					'continued'             => min( 1000000000, absint( $row['continued'] ?? 0 ) ),
+					'unknown'               => min( 1000000000, absint( $row['unknown'] ?? 0 ) ),
 					'non_continuation_rate' => is_numeric( $rate ) ? min( 100, max( 0, (float) $rate ) ) : null,
 				);
 			}

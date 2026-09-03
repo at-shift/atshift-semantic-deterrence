@@ -213,6 +213,12 @@
 	color: #2c3f91;
 }
 
+.atsdn-status--experiment-pending .atsdn-mode-pill {
+	background: #fff8e8;
+	border-color: #ead39a;
+	color: #76510a;
+}
+
 .atsdn-signal-strip {
 	display: grid;
 	gap: 8px;
@@ -679,6 +685,20 @@
 	line-height: 1.6;
 	margin: 0;
 	padding: 10px 12px;
+}
+
+.atsdn-experiment-consent-state {
+	border-left: 3px solid var(--atsdn-amber);
+	padding-left: 10px;
+}
+
+.atsdn-experiment-consent-state.is-enabled {
+	border-left-color: var(--atsdn-green);
+	color: var(--atsdn-green);
+}
+
+.atsdn-network-comparison-table {
+	margin-top: 18px;
 }
 
 .atsdn-settings-table select,

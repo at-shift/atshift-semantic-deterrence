@@ -211,7 +211,8 @@ class Atshift_Semantic_Deterrence_Admin {
 			<?php $this->render_notice_messages(); ?>
 			<?php $this->render_onboarding_modal(); ?>
 
-			<div class="atsdn-status atsdn-status--<?php echo esc_attr( sanitize_html_class( $settings['mode'] ) ); ?>">
+			<?php $status_mode = 'experiment' === $settings['mode'] && '1' !== $settings['experiment_enabled'] ? 'experiment-pending' : $settings['mode']; ?>
+			<div class="atsdn-status atsdn-status--<?php echo esc_attr( sanitize_html_class( $status_mode ) ); ?>">
 				<div class="atsdn-status-head">
 					<div>
 						<h2><?php esc_html_e( 'このサイトの観測', 'atshift-semantic-deterrence' ); ?></h2>
@@ -219,7 +220,7 @@ class Atshift_Semantic_Deterrence_Admin {
 							<?php esc_html_e( 'このプラグインは訪問者をAIと判定しません。不審な探索にこのサイトの応答を返した後、探索が継続したかを測定します。', 'atshift-semantic-deterrence' ); ?>
 						</p>
 					</div>
-					<span class="atsdn-mode-pill"><?php echo esc_html( $this->get_mode_label( $settings['mode'] ) ); ?></span>
+					<span class="atsdn-mode-pill"><?php echo esc_html( $this->get_mode_label( $settings['mode'], $settings['experiment_enabled'] ) ); ?></span>
 				</div>
 				<div class="atsdn-signal-strip" aria-hidden="true">
 					<span class="atsdn-signal atsdn-signal--observe"></span>
@@ -393,14 +394,17 @@ class Atshift_Semantic_Deterrence_Admin {
 
 	private function render_agent_response_section( $settings, $selected_only = false ) {
 		$mode         = $settings['mode'];
-		$is_observing = 'observe' === $mode;
+		$is_experiment_pending = 'experiment' === $mode && '1' !== $settings['experiment_enabled'];
+		$is_observing          = 'observe' === $mode || $is_experiment_pending;
 		$is_limited   = 'deter_limit' === $mode;
 		$variants     = $selected_only ? Atshift_Semantic_Deterrence_Detector::get_semantic_variant_ids() : $this->get_response_preview_variants( $settings );
 		?>
 		<section class="atsdn-response-preview<?php echo $selected_only ? ' atsdn-response-preview--selected' : ''; ?>" data-atsdn-response-preview>
 			<h2><?php esc_html_e( 'エージェントへ返す内容', 'atshift-semantic-deterrence' ); ?></h2>
 			<p class="atsdn-section-lede">
-				<?php if ( $is_observing ) : ?>
+				<?php if ( $is_experiment_pending ) : ?>
+					<?php esc_html_e( '応答実験を開始していなくても、不審探索の件数と分類はこのサイト内で観測します。開始して保存するまではHTTPレスポンスを変更せず、警告後の継続有無は測定しません。', 'atshift-semantic-deterrence' ); ?>
+				<?php elseif ( $is_observing ) : ?>
 					<?php esc_html_e( '現在は観測のみのため、不審リクエストのレスポンスは変更しません。下のプレビューは、抑止を有効にした場合に返す内容です。', 'atshift-semantic-deterrence' ); ?>
 				<?php elseif ( 'experiment' === $mode && '1' === $settings['experiment_enabled'] ) : ?>
 					<?php esc_html_e( '実験モードでは、設定した割り当て戦略に従い、固定カタログと通常403の対照群を決め打ちで割り当てます。途中の成績で自動変更しません。', 'atshift-semantic-deterrence' ); ?>
@@ -426,13 +430,14 @@ class Atshift_Semantic_Deterrence_Admin {
 			}
 		}
 
-		$best = isset( $aggregate['best_variant'] ) && is_array( $aggregate['best_variant'] ) ? $aggregate['best_variant'] : null;
+		$best             = isset( $aggregate['best_variant'] ) && is_array( $aggregate['best_variant'] ) ? $aggregate['best_variant'] : null;
+		$network_variants = isset( $aggregate['variants'] ) && is_array( $aggregate['variants'] ) ? $aggregate['variants'] : array();
 		?>
 		<section class="atsdn-section atsdn-network-section">
 			<div class="atsdn-status-head">
 				<div>
 					<h2><?php esc_html_e( '共有集計の参照', 'atshift-semantic-deterrence' ); ?></h2>
-					<p class="atsdn-section-lede"><?php esc_html_e( '各クライアントが提供した匿名集計を読み出します。中央からコード、強制遮断、強制設定は受け取りません。', 'atshift-semantic-deterrence' ); ?></p>
+					<p class="atsdn-section-lede"><?php esc_html_e( '参加しなくても、自分のサイトの状況確認と、集まった匿名集計データの参照は可能です。', 'atshift-semantic-deterrence' ); ?></p>
 				</div>
 				<span class="atsdn-mode-pill"><?php echo esc_html( '1' === $settings['aggregate_read_enabled'] ? __( '参照有効', 'atshift-semantic-deterrence' ) : __( '参照停止中', 'atshift-semantic-deterrence' ) ); ?></span>
 			</div>
@@ -455,6 +460,40 @@ class Atshift_Semantic_Deterrence_Admin {
 				);
 				?>
 			</div>
+			<table class="widefat striped atsdn-data-table atsdn-network-comparison-table">
+				<thead>
+					<tr>
+						<th><?php esc_html_e( '応答選択肢', 'atshift-semantic-deterrence' ); ?></th>
+						<th><?php esc_html_e( '実験群', 'atshift-semantic-deterrence' ); ?></th>
+						<th><?php esc_html_e( 'サイト数', 'atshift-semantic-deterrence' ); ?></th>
+						<th><?php esc_html_e( '件数', 'atshift-semantic-deterrence' ); ?></th>
+						<th><?php esc_html_e( '継続なしを観測', 'atshift-semantic-deterrence' ); ?></th>
+						<th><?php esc_html_e( '継続', 'atshift-semantic-deterrence' ); ?></th>
+						<th><?php esc_html_e( '不明', 'atshift-semantic-deterrence' ); ?></th>
+						<th><?php esc_html_e( '率', 'atshift-semantic-deterrence' ); ?></th>
+						<th><?php esc_html_e( '通常403との差', 'atshift-semantic-deterrence' ); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php if ( empty( $network_variants ) ) : ?>
+						<tr class="atsdn-table-empty"><td colspan="9"><?php esc_html_e( '応答比較データはまだありません。', 'atshift-semantic-deterrence' ); ?></td></tr>
+					<?php else : ?>
+						<?php foreach ( $network_variants as $row ) : ?>
+							<tr>
+								<td data-label="<?php esc_attr_e( '応答選択肢', 'atshift-semantic-deterrence' ); ?>"><span class="atsdn-variant-chip"><?php echo esc_html( $this->get_variant_display_label( $row['variant'] ) ); ?></span></td>
+								<td data-label="<?php esc_attr_e( '実験群', 'atshift-semantic-deterrence' ); ?>"><?php echo esc_html( $this->get_experiment_arm_label( $row['experiment_arm'] ) ); ?></td>
+								<td data-label="<?php esc_attr_e( 'サイト数', 'atshift-semantic-deterrence' ); ?>"><?php echo esc_html( absint( $row['site_count'] ) ); ?></td>
+								<td data-label="<?php esc_attr_e( '件数', 'atshift-semantic-deterrence' ); ?>"><?php echo esc_html( absint( $row['total_events'] ) ); ?></td>
+								<td data-label="<?php esc_attr_e( '継続なしを観測', 'atshift-semantic-deterrence' ); ?>"><?php echo esc_html( absint( $row['observed_ceased'] ) ); ?></td>
+								<td data-label="<?php esc_attr_e( '継続', 'atshift-semantic-deterrence' ); ?>"><?php echo esc_html( absint( $row['continued'] ) ); ?></td>
+								<td data-label="<?php esc_attr_e( '不明', 'atshift-semantic-deterrence' ); ?>"><?php echo esc_html( absint( $row['unknown'] ) ); ?></td>
+								<td data-label="<?php esc_attr_e( '率', 'atshift-semantic-deterrence' ); ?>"><?php echo esc_html( null === $row['non_continuation_rate'] ? __( '測定中', 'atshift-semantic-deterrence' ) : sprintf( '%.1f%%', $row['non_continuation_rate'] ) ); ?></td>
+								<td data-label="<?php esc_attr_e( '通常403との差', 'atshift-semantic-deterrence' ); ?>"><?php echo esc_html( $this->format_network_control_difference( $row, $network_variants ) ); ?></td>
+							</tr>
+						<?php endforeach; ?>
+					<?php endif; ?>
+				</tbody>
+			</table>
 		</section>
 		<?php
 	}
@@ -554,10 +593,13 @@ class Atshift_Semantic_Deterrence_Admin {
 							</td>
 						</tr>
 						<tr data-atsdn-mode-panel="experiment">
-							<th scope="row"><?php esc_html_e( '実験への参加', 'atshift-semantic-deterrence' ); ?></th>
+							<th scope="row"><?php esc_html_e( '応答実験の開始', 'atshift-semantic-deterrence' ); ?></th>
 							<td>
-								<label><input type="checkbox" name="experiment_enabled" value="1" <?php checked( $settings['experiment_enabled'], '1' ); ?>> <?php esc_html_e( 'このサイトを抑止しながら、固定カタログと対照群を使ったローカル応答実験を有効にする', 'atshift-semantic-deterrence' ); ?></label>
-								<p class="description"><?php esc_html_e( '実験参加モードを選んでも、このチェックを入れるまではHTTPレスポンスを変更しません。', 'atshift-semantic-deterrence' ); ?></p>
+								<label><input id="atsdn-experiment-enabled" type="checkbox" name="experiment_enabled" value="1" <?php checked( $settings['experiment_enabled'], '1' ); ?>> <?php esc_html_e( 'このサイトを抑止しながら、固定カタログと対照群を使ったローカル応答実験を有効にする', 'atshift-semantic-deterrence' ); ?></label>
+								<p class="description atsdn-experiment-consent-state" data-atsdn-experiment-consent-state>
+									<span data-atsdn-experiment-state="pending"><?php esc_html_e( '応答実験を開始していなくても、不審探索の件数と分類はこのサイト内で観測します。開始して保存するまではHTTPレスポンスを変更せず、警告後の継続有無は測定しません。', 'atshift-semantic-deterrence' ); ?></span>
+									<span data-atsdn-experiment-state="enabled"><?php esc_html_e( 'このサイトを抑止しながら実験参加中', 'atshift-semantic-deterrence' ); ?></span>
+								</p>
 							</td>
 						</tr>
 						<tr data-atsdn-mode-panel="experiment">
@@ -1058,7 +1100,13 @@ class Atshift_Semantic_Deterrence_Admin {
 				<?php endif; ?>
 			</td>
 			<td data-label="<?php esc_attr_e( 'HTTP', 'atshift-semantic-deterrence' ); ?>"><?php echo esc_html( absint( $row['http_status'] ) ); ?></td>
-			<td data-label="<?php esc_attr_e( '結果', 'atshift-semantic-deterrence' ); ?>"><span class="atsdn-outcome-pill atsdn-outcome-pill--<?php echo esc_attr( sanitize_html_class( $row['outcome'] ) ); ?>"><?php echo esc_html( $this->get_outcome_label( $row['outcome'] ) ); ?></span></td>
+			<td data-label="<?php esc_attr_e( '結果', 'atshift-semantic-deterrence' ); ?>">
+				<?php if ( ! empty( $row['responded'] ) ) : ?>
+					<span class="atsdn-outcome-pill atsdn-outcome-pill--<?php echo esc_attr( sanitize_html_class( $row['outcome'] ) ); ?>"><?php echo esc_html( $this->get_outcome_label( $row['outcome'] ) ); ?></span>
+				<?php else : ?>
+					<span class="atsdn-muted-text"><?php esc_html_e( '観測のみ', 'atshift-semantic-deterrence' ); ?></span>
+				<?php endif; ?>
+			</td>
 			<td data-label="<?php esc_attr_e( '継続数', 'atshift-semantic-deterrence' ); ?>">
 				<?php echo esc_html( absint( $row['follow_up_count'] ) ); ?>
 				<?php if ( ! empty( $row['last_seen_at'] ) ) : ?>
@@ -1206,6 +1254,33 @@ class Atshift_Semantic_Deterrence_Admin {
 		);
 	}
 
+	private function format_network_control_difference( $row, $variants ) {
+		if ( 'control_generic' === $row['variant'] || ! is_numeric( $row['non_continuation_rate'] ) ) {
+			return '-';
+		}
+
+		$control_ceased    = 0;
+		$control_continued = 0;
+		foreach ( $variants as $control ) {
+			if ( 'control_generic' !== $control['variant'] || $control['experiment_arm'] !== $row['experiment_arm'] ) {
+				continue;
+			}
+
+			$control_ceased    += absint( $control['observed_ceased'] );
+			$control_continued += absint( $control['continued'] );
+		}
+
+		$control_total = $control_ceased + $control_continued;
+		if ( 0 === $control_total ) {
+			return __( '測定中', 'atshift-semantic-deterrence' );
+		}
+
+		$control_rate = ( $control_ceased / $control_total ) * 100;
+		$difference   = (float) $row['non_continuation_rate'] - $control_rate;
+		$sign         = $difference > 0 ? '+' : '';
+		return $sign . number_format_i18n( $difference, 1 ) . ' pp';
+	}
+
 	private function get_modes() {
 		return array(
 			'observe'     => __( 'このサイトの観測のみ', 'atshift-semantic-deterrence' ),
@@ -1233,7 +1308,11 @@ class Atshift_Semantic_Deterrence_Admin {
 		return $labels[ $experiment_arm ] ?? $experiment_arm;
 	}
 
-	private function get_mode_label( $mode ) {
+	private function get_mode_label( $mode, $experiment_enabled = '0' ) {
+		if ( 'experiment' === $mode && '1' !== $experiment_enabled ) {
+			return __( 'ローカル観測中・応答実験は未開始', 'atshift-semantic-deterrence' );
+		}
+
 		$labels = array(
 			'observe'     => __( 'このサイトを観測中', 'atshift-semantic-deterrence' ),
 			'deter'      => __( 'このサイトを抑止中', 'atshift-semantic-deterrence' ),

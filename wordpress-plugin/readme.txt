@@ -4,7 +4,7 @@ Tags: security, 403, automation, firewall, privacy
 Requires at least: 6.4
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,12 @@ Data Sharing Scope And Use: https://github.com/at-shift/atshift-semantic-deterre
 初期状態では送信しません。匿名共有を有効にした場合だけ、日次ジッター付きで匿名集計を送信します。集計サーバは比較データの読み出し元であり、遠隔操作システムではありません。
 
 == Changelog ==
+
+= 0.1.3 =
+* Clarified when Experiment mode is selected but explicit experiment participation remains disabled.
+* Added immediate consent-state feedback in Settings and an accurate inactive status on the Dashboard.
+* Added thresholded cross-site response comparisons for readers who do not contribute experiment data.
+* Kept observation-only detections out of post-response unknown counts while retaining them in local exposure totals.
 
 = 0.1.2 =
 * Added local-only hourly activity and optional Cloudflare country or region reference views.

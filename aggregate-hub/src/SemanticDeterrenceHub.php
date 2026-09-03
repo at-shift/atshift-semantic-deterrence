@@ -137,6 +137,9 @@ class Atshift_Semantic_Deterrence_Hub {
 			if ( 'control_generic' === $row['variant'] ) {
 				continue;
 			}
+			if ( ! is_numeric( $row['non_continuation_rate'] ) ) {
+				continue;
+			}
 			if ( null === $best || $row['non_continuation_rate'] > $best['non_continuation_rate'] ) {
 				$best = $row;
 			}
@@ -148,6 +151,7 @@ class Atshift_Semantic_Deterrence_Hub {
 			'days'           => 30,
 			'privacy_thresholds' => $this->privacy_thresholds(),
 			'best_variant'   => $best,
+			'variants'       => array_slice( $variants['body']['variants'], 0, 100 ),
 			'variants_url'   => '/v1/aggregates/variants',
 			'policy'         => array(
 				'remote_control' => false,
@@ -439,17 +443,15 @@ class Atshift_Semantic_Deterrence_Hub {
 				SUM(follow_up_count) AS follow_up_count
 			FROM atsdn_hub_events
 			WHERE observed_date >= :since
+				AND variant <> 'observe_only'
 			GROUP BY variant, experiment_arm, response_catalog_id, response_fingerprint
 			HAVING site_count >= :min_sites AND total_events >= :min_events
 			ORDER BY total_events DESC, variant ASC, experiment_arm ASC"
 		);
-		$stmt->execute(
-			array(
-				':since'      => $since,
-				':min_sites'  => $min['sites'],
-				':min_events' => $min['events'],
-			)
-		);
+		$stmt->bindValue( ':since', $since, PDO::PARAM_STR );
+		$stmt->bindValue( ':min_sites', (int) $min['sites'], PDO::PARAM_INT );
+		$stmt->bindValue( ':min_events', (int) $min['events'], PDO::PARAM_INT );
+		$stmt->execute();
 
 		$variants = array();
 		foreach ( $stmt->fetchAll() as $row ) {

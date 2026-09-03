@@ -30,6 +30,22 @@
 		} );
 	}
 
+	function updateExperimentConsentState() {
+		var checkbox = document.getElementById( 'atsdn-experiment-enabled' );
+		var state = document.querySelector( '[data-atsdn-experiment-consent-state]' );
+
+		if ( ! checkbox || ! state ) {
+			return;
+		}
+
+		state.querySelectorAll( '[data-atsdn-experiment-state]' ).forEach( function ( item ) {
+			var target = item.getAttribute( 'data-atsdn-experiment-state' );
+			item.classList.toggle( 'is-hidden', checkbox.checked ? 'enabled' !== target : 'pending' !== target );
+		} );
+
+		state.classList.toggle( 'is-enabled', checkbox.checked );
+	}
+
 	function setupOnboarding() {
 		var modal = document.querySelector( '[data-atsdn-onboarding]' );
 
@@ -82,9 +98,11 @@
 	document.addEventListener( 'DOMContentLoaded', function () {
 		var select = document.getElementById( 'atsdn-variant' );
 		var mode = document.getElementById( 'atsdn-mode' );
+		var experiment = document.getElementById( 'atsdn-experiment-enabled' );
 
 		updateResponsePreview();
 		updateModePanels();
+		updateExperimentConsentState();
 		setupOnboarding();
 
 		if ( select ) {
@@ -92,6 +110,9 @@
 		}
 		if ( mode ) {
 			mode.addEventListener( 'change', updateModePanels );
+		}
+		if ( experiment ) {
+			experiment.addEventListener( 'change', updateExperimentConsentState );
 		}
 	} );
 }() );

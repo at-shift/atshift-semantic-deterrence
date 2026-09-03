@@ -398,11 +398,11 @@ class Atshift_Semantic_Deterrence_Storage {
 				"SELECT
 					COUNT(*) AS detected,
 					SUM(CASE WHEN responded = 1 AND variant <> 'control_generic' THEN 1 ELSE 0 END) AS warnings,
-					SUM(CASE WHEN outcome = 'observed_ceased' THEN 1 ELSE 0 END) AS observed_ceased,
-					SUM(CASE WHEN outcome IN ('continued_same', 'continued_alternate', 'intensified') THEN 1 ELSE 0 END) AS continued,
-					SUM(CASE WHEN outcome IN ('unknown', 'rate_limited') THEN 1 ELSE 0 END) AS unknown,
-					SUM(CASE WHEN outcome = 'continued_alternate' THEN 1 ELSE 0 END) AS continued_alternate,
-					SUM(CASE WHEN outcome = 'intensified' THEN 1 ELSE 0 END) AS intensified
+					SUM(CASE WHEN responded = 1 AND outcome = 'observed_ceased' THEN 1 ELSE 0 END) AS observed_ceased,
+					SUM(CASE WHEN responded = 1 AND outcome IN ('continued_same', 'continued_alternate', 'intensified') THEN 1 ELSE 0 END) AS continued,
+					SUM(CASE WHEN responded = 1 AND outcome IN ('unknown', 'rate_limited') THEN 1 ELSE 0 END) AS unknown,
+					SUM(CASE WHEN responded = 1 AND outcome = 'continued_alternate' THEN 1 ELSE 0 END) AS continued_alternate,
+					SUM(CASE WHEN responded = 1 AND outcome = 'intensified' THEN 1 ELSE 0 END) AS intensified
 				FROM {$table}
 				WHERE created_at >= %s",
 				$since
