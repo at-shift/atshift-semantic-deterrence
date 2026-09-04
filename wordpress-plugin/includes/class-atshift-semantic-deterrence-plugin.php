@@ -86,6 +86,7 @@ class Atshift_Semantic_Deterrence_Plugin {
 	public function run_maintenance() {
 		$this->storage->finalize_windows();
 		$this->storage->purge_old_data();
+		Atshift_Semantic_Deterrence_Storage::purge_request_guards();
 		$this->maybe_share_anonymous_batch();
 		$this->maybe_pull_aggregate_data();
 	}
@@ -105,10 +106,12 @@ class Atshift_Semantic_Deterrence_Plugin {
 		$source_hmac     = sanitize_text_field( $classification['source_hmac'] );
 		$experiment_hmac = sanitize_text_field( $classification['experiment_hmac'] );
 		$follow_ups      = 0;
-		if ( ! $this->is_follow_up_throttled( $source_hmac, $category, $settings ) ) {
+		$follow_fingerprint = $settings['runtime_epoch'] . '|' . $source_hmac . '|' . $category;
+		$follow_claim       = Atshift_Semantic_Deterrence_Storage::acquire_request_claim( 'follow', $follow_fingerprint, self::FOLLOW_UP_THROTTLE_SECONDS );
+		if ( false !== $follow_claim ) {
 			$follow_ups = $this->storage->mark_follow_up( $source_hmac, $category, $level );
-			if ( $follow_ups > 0 ) {
-				$this->throttle_follow_up( $source_hmac, $category, $settings );
+			if ( 1 > $follow_ups ) {
+				Atshift_Semantic_Deterrence_Storage::release_request_claim( 'follow', $follow_fingerprint, $follow_claim );
 			}
 		}
 		$should_respond  = $this->should_respond( $settings, $level );
@@ -468,22 +471,7 @@ class Atshift_Semantic_Deterrence_Plugin {
 		return $follow_ups > 0 || $this->storage->has_recent_continuation( $source_hmac );
 	}
 
-	private function is_follow_up_throttled( $source_hmac, $category, $settings ) {
-		$key = 'atsdn_follow_' . substr( hash( 'sha256', $settings['runtime_epoch'] . '|' . $source_hmac . '|' . $category ), 0, 32 );
-		return (bool) get_transient( $key );
-	}
-
-	private function throttle_follow_up( $source_hmac, $category, $settings ) {
-		$key = 'atsdn_follow_' . substr( hash( 'sha256', $settings['runtime_epoch'] . '|' . $source_hmac . '|' . $category ), 0, 32 );
-		set_transient( $key, '1', self::FOLLOW_UP_THROTTLE_SECONDS );
-	}
-
 	private function should_record_event( $source_hmac, $category, $variant, $status, $settings ) {
-		$key = 'atsdn_event_' . substr( hash( 'sha256', $settings['runtime_epoch'] . '|' . $source_hmac . '|' . $category . '|' . $variant . '|' . absint( $status ) ), 0, 32 );
-		if ( get_transient( $key ) ) {
-			return false;
-		}
-
 		/**
 		 * Filters the duplicate-event throttle window.
 		 *
@@ -492,27 +480,16 @@ class Atshift_Semantic_Deterrence_Plugin {
 		 *
 		 * @param int $seconds Throttle window in seconds.
 		 */
-		if ( ! $this->consume_event_write_budget( $settings ) ) {
+		$seconds     = max( 5, absint( apply_filters( 'atshift_semantic_deterrence_event_throttle_seconds', self::EVENT_THROTTLE_SECONDS ) ) );
+		$fingerprint = $settings['runtime_epoch'] . '|' . $source_hmac . '|' . $category . '|' . $variant . '|' . absint( $status );
+		$claim       = Atshift_Semantic_Deterrence_Storage::acquire_request_claim( 'event', $fingerprint, $seconds );
+
+		if ( false === $claim ) {
 			return false;
 		}
 
-		$seconds = absint( apply_filters( 'atshift_semantic_deterrence_event_throttle_seconds', self::EVENT_THROTTLE_SECONDS ) );
-		set_transient( $key, '1', max( 5, $seconds ) );
-
-		return true;
-	}
-
-	private function consume_event_write_budget( $settings ) {
-		$minute = gmdate( 'YmdHi' );
-		$key    = 'atsdn_event_budget_' . substr( hash( 'sha256', $settings['runtime_epoch'] . '|' . $minute ), 0, 20 );
-		$count  = absint( get_transient( $key ) );
 		$limit  = absint( apply_filters( 'atshift_semantic_deterrence_event_budget_per_minute', self::EVENT_WRITE_BUDGET_PER_MINUTE ) );
-		if ( $count >= max( 1, $limit ) ) {
-			return false;
-		}
-
-		set_transient( $key, $count + 1, 2 * MINUTE_IN_SECONDS );
-		return true;
+		return Atshift_Semantic_Deterrence_Storage::consume_request_budget( 'event', $settings['runtime_epoch'], $limit );
 	}
 
 	private function choose_experiment_arm( $settings, $experiment_hmac ) {

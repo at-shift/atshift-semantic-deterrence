@@ -4,7 +4,7 @@ Tags: security, 403, automation, firewall, privacy
 Requires at least: 6.4
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 0.1.3
+Stable tag: 0.1.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,7 +24,7 @@ atshift Semantic Deterrence は、不審な自動探索に対して明確な拒�
 * サイト固有の高確度パス接頭辞と、開発者向けの構造化ルールフィルターを利用できます。
 * 日次ソルト付きの測定用 HMAC と、制御・実験用に分離した HMAC でローカル測定を行います。
 * 10 分の観測窓で、警告後に不審探索が継続したかを分類します。
-* 同じ系列とカテゴリからの短時間バーストはローカルで間引き、探索集中時に全リクエストを DB 行にしないようにします。
+* 同じ系列とカテゴリからの短時間バーストは DB 上の原子的な排他処理と書き込み上限で間引き、探索集中時に全リクエストをイベント行にしないようにします。
 * 匿名集計 JSON を手動エクスポートできます。
 * 明示的にオプトインした場合だけ、匿名集計を日次ジッター付きで Hub へ送信できます。
 * データ提供に参加しなくても、Hub に集まった匿名集計を参照できます。
@@ -109,6 +109,10 @@ Data Sharing Scope And Use: https://github.com/at-shift/atshift-semantic-deterre
 初期状態では送信しません。匿名共有を有効にした場合だけ、日次ジッター付きで匿名集計を送信します。集計サーバは比較データの読み出し元であり、遠隔操作システムではありません。
 
 == Changelog ==
+
+= 0.1.4 =
+* Made event claims and request-budget updates database-atomic to prevent duplicate processing under concurrent requests.
+* Hardened per-minute write budgets and storage cleanup behavior.
 
 = 0.1.3 =
 * Clarified when Experiment mode is selected but explicit experiment participation remains disabled.

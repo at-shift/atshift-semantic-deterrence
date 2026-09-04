@@ -377,7 +377,16 @@ class Atshift_Semantic_Deterrence_Detector {
 			);
 		}
 
-		if ( ! $this->consume_not_found_write_budget( $epoch ) ) {
+		$claim = Atshift_Semantic_Deterrence_Storage::acquire_request_claim( '404', $epoch . '|' . $source, max( 1, $minimum_write_interval ) );
+		if ( false === $claim ) {
+			return array(
+				'category' => '',
+				'level'    => 0,
+			);
+		}
+
+		$limit = absint( apply_filters( 'atshift_semantic_deterrence_404_budget_per_minute', self::NOT_FOUND_BUDGET_PER_MINUTE ) );
+		if ( ! Atshift_Semantic_Deterrence_Storage::consume_request_budget( '404', $epoch, $limit ) ) {
 			return array(
 				'category' => '',
 				'level'    => 0,
@@ -482,20 +491,6 @@ class Atshift_Semantic_Deterrence_Detector {
 		$path = preg_replace( '/[\x00-\x1F\x7F]/', '', $path );
 
 		return '/' . ltrim( (string) $path, '/' );
-	}
-
-	private function consume_not_found_write_budget( $epoch ) {
-		$minute = gmdate( 'YmdHi' );
-		$key    = 'atsdn_404_budget_' . substr( hash( 'sha256', $epoch . '|' . $minute ), 0, 20 );
-		$count  = absint( get_transient( $key ) );
-		$limit  = absint( apply_filters( 'atshift_semantic_deterrence_404_budget_per_minute', self::NOT_FOUND_BUDGET_PER_MINUTE ) );
-
-		if ( $count >= max( 1, $limit ) ) {
-			return false;
-		}
-
-		set_transient( $key, $count + 1, 2 * MINUTE_IN_SECONDS );
-		return true;
 	}
 
 	private function get_request_method() {

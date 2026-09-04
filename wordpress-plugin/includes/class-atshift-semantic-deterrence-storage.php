@@ -16,6 +16,8 @@ class Atshift_Semantic_Deterrence_Storage {
 	const OPTION_SCHEMA_VERSION = 'atshift_semantic_deterrence_schema_version';
 	const SCHEMA_VERSION = 4;
 	const OUTCOME_UNKNOWN = 'unknown';
+	const GUARD_CLAIM_PREFIX = 'atsdn_guard_claim_';
+	const GUARD_BUDGET_PREFIX = 'atsdn_guard_budget_';
 
 	/** @var wpdb */
 	private $wpdb;
@@ -27,6 +29,136 @@ class Atshift_Semantic_Deterrence_Storage {
 
 	public function table_name() {
 		return $this->wpdb->prefix . 'atsdn_events';
+	}
+
+	/**
+	 * Atomically reserve a short-lived request-processing claim.
+	 *
+	 * @param string $namespace Claim namespace.
+	 * @param string $fingerprint Privacy-bounded request fingerprint.
+	 * @param int    $ttl Claim lifetime in seconds.
+	 * @return string|false Claim token or false when another request owns it.
+	 */
+	public static function acquire_request_claim( $namespace, $fingerprint, $ttl ) {
+		global $wpdb;
+
+		$option_name = self::guard_option_name( self::GUARD_CLAIM_PREFIX, $namespace, $fingerprint );
+		$now         = time();
+		$token       = wp_generate_uuid4();
+		$value       = ( $now + max( 1, absint( $ttl ) ) ) . ':' . $token;
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name = %s AND CAST(option_value AS UNSIGNED) <= %d",
+				$option_name,
+				$now
+			)
+		);
+		$inserted = $wpdb->query(
+			$wpdb->prepare(
+				"INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'no')",
+				$option_name,
+				$value
+			)
+		);
+		wp_cache_delete( $option_name, 'options' );
+
+		return 1 === $inserted ? $token : false;
+	}
+
+	/**
+	 * Release a request claim only when it is still owned by the caller.
+	 *
+	 * @param string $namespace Claim namespace.
+	 * @param string $fingerprint Privacy-bounded request fingerprint.
+	 * @param string $token Claim token.
+	 * @return void
+	 */
+	public static function release_request_claim( $namespace, $fingerprint, $token ) {
+		global $wpdb;
+
+		$option_name = self::guard_option_name( self::GUARD_CLAIM_PREFIX, $namespace, $fingerprint );
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value LIKE %s",
+				$option_name,
+				'%:' . $wpdb->esc_like( (string) $token )
+			)
+		);
+		wp_cache_delete( $option_name, 'options' );
+	}
+
+	/**
+	 * Atomically consume one write from a per-minute request budget.
+	 *
+	 * @param string $namespace Budget namespace.
+	 * @param string $fingerprint Privacy-bounded budget fingerprint.
+	 * @param int    $limit Maximum writes per minute.
+	 * @return bool
+	 */
+	public static function consume_request_budget( $namespace, $fingerprint, $limit ) {
+		global $wpdb;
+
+		$limit       = max( 1, absint( $limit ) );
+		$minute      = gmdate( 'YmdHi' );
+		$option_name = self::guard_option_name( self::GUARD_BUDGET_PREFIX . $minute . '_', $namespace, $fingerprint );
+
+		add_option( $option_name, 0, '', false );
+		$updated = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$wpdb->options} SET option_value = CAST(option_value AS UNSIGNED) + 1 WHERE option_name = %s AND CAST(option_value AS UNSIGNED) < %d",
+				$option_name,
+				$limit
+			)
+		);
+		wp_cache_delete( $option_name, 'options' );
+
+		return 1 === $updated;
+	}
+
+	/** @return void */
+	public static function purge_request_guards() {
+		global $wpdb;
+
+		$now                = time();
+		$claim_like         = $wpdb->esc_like( self::GUARD_CLAIM_PREFIX ) . '%';
+		$budget_like        = $wpdb->esc_like( self::GUARD_BUDGET_PREFIX ) . '%';
+		$current_budget_like = $wpdb->esc_like( self::GUARD_BUDGET_PREFIX . gmdate( 'YmdHi' ) . '_' ) . '%';
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND CAST(option_value AS UNSIGNED) <= %d",
+				$claim_like,
+				$now
+			)
+		);
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_name NOT LIKE %s",
+				$budget_like,
+				$current_budget_like
+			)
+		);
+	}
+
+	/** @return void */
+	public static function purge_all_request_guards() {
+		global $wpdb;
+
+		$claim_like  = $wpdb->esc_like( self::GUARD_CLAIM_PREFIX ) . '%';
+		$budget_like = $wpdb->esc_like( self::GUARD_BUDGET_PREFIX ) . '%';
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+				$claim_like,
+				$budget_like
+			)
+		);
+	}
+
+	private static function guard_option_name( $prefix, $namespace, $fingerprint ) {
+		$namespace = substr( sanitize_key( $namespace ), 0, 20 );
+		return $prefix . $namespace . '_' . substr( hash( 'sha256', (string) $fingerprint ), 0, 32 );
 	}
 
 	public static function get_default_settings() {

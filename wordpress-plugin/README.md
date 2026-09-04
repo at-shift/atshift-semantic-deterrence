@@ -108,7 +108,7 @@ flowchart LR
 - Fixed response catalog and high-confidence response threshold.
 - Local exclusions for paths and source addresses.
 - Daily rotating measurement identifiers and a separate stable experiment assignment key.
-- Per-source duplicate suppression and site-wide write budgets.
+- Database-atomic per-source duplicate suppression and site-wide write budgets.
 - Thirty-day local retention for event rows.
 - HTTPS-only Hub communication by default, with no redirects and bounded response sizes.
 - HMAC-signed batch uploads with timestamp and nonce headers.

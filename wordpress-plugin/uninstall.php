@@ -16,6 +16,7 @@ $settings = Atshift_Semantic_Deterrence_Storage::get_settings();
 if ( '1' === (string) $settings['delete_on_uninstall'] ) {
 	$storage = new Atshift_Semantic_Deterrence_Storage();
 	$storage->drop_tables();
+	Atshift_Semantic_Deterrence_Storage::purge_all_request_guards();
 
 	delete_option( Atshift_Semantic_Deterrence_Storage::OPTION_SETTINGS );
 	delete_option( Atshift_Semantic_Deterrence_Storage::OPTION_SECRET );
