@@ -791,8 +791,10 @@ class Atshift_Semantic_Deterrence_Admin {
 
 		Atshift_Semantic_Deterrence_Storage::update_settings( $settings );
 
-		wp_safe_redirect( add_query_arg( 'atsdn-updated', '1', admin_url( 'admin.php?page=atshift-semantic-deterrence-settings' ) ) );
-		exit;
+		$this->redirect_with_notice(
+			'updated',
+			admin_url( 'admin.php?page=atshift-semantic-deterrence-settings' )
+		);
 	}
 
 	public function complete_onboarding() {
@@ -822,8 +824,11 @@ class Atshift_Semantic_Deterrence_Admin {
 
 		Atshift_Semantic_Deterrence_Storage::update_settings( $settings );
 
-		wp_safe_redirect( add_query_arg( 'atsdn-onboarded', '1', wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=atshift-semantic-deterrence' ) ) );
-		exit;
+		$redirect_url = wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=atshift-semantic-deterrence' );
+		$this->redirect_with_notice(
+			'onboarded',
+			remove_query_arg( array( 'atsdn-updated', 'atsdn-finalized', 'atsdn-deleted', 'atsdn-onboarded' ), $redirect_url )
+		);
 	}
 
 	public function finalize_windows() {
@@ -834,8 +839,10 @@ class Atshift_Semantic_Deterrence_Admin {
 		check_admin_referer( 'atsdn_finalize_windows', 'atsdn_nonce' );
 		$this->storage->finalize_windows();
 
-		wp_safe_redirect( add_query_arg( 'atsdn-finalized', '1', admin_url( 'admin.php?page=atshift-semantic-deterrence-dashboard' ) ) );
-		exit;
+		$this->redirect_with_notice(
+			'finalized',
+			admin_url( 'admin.php?page=atshift-semantic-deterrence-dashboard' )
+		);
 	}
 
 	public function delete_local_data() {
@@ -853,8 +860,10 @@ class Atshift_Semantic_Deterrence_Admin {
 		$settings['runtime_epoch'] = wp_generate_uuid4();
 		Atshift_Semantic_Deterrence_Storage::update_settings( $settings );
 
-		wp_safe_redirect( add_query_arg( 'atsdn-deleted', '1', admin_url( 'admin.php?page=atshift-semantic-deterrence-dashboard' ) ) );
-		exit;
+		$this->redirect_with_notice(
+			'deleted',
+			admin_url( 'admin.php?page=atshift-semantic-deterrence-dashboard' )
+		);
 	}
 
 	public function download_anonymous_batch() {
@@ -973,18 +982,35 @@ class Atshift_Semantic_Deterrence_Admin {
 	}
 
 	private function render_notice_messages() {
-		if ( isset( $_GET['atsdn-updated'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( '設定を保存しました。', 'atshift-semantic-deterrence' ) . '</p></div>';
+		$transient_key = $this->get_notice_transient_key();
+		$notice        = get_transient( $transient_key );
+
+		if ( false === $notice ) {
+			return;
 		}
-		if ( isset( $_GET['atsdn-finalized'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( '観測窓を確定しました。', 'atshift-semantic-deterrence' ) . '</p></div>';
+
+		delete_transient( $transient_key );
+
+		$messages = array(
+			'updated'   => __( '設定を保存しました。', 'atshift-semantic-deterrence' ),
+			'finalized' => __( '観測窓を確定しました。', 'atshift-semantic-deterrence' ),
+			'deleted'   => __( 'ローカル集計データを削除し、観測のみへ戻しました。実験割り当ては再度選択できます。', 'atshift-semantic-deterrence' ),
+			'onboarded' => __( '初回確認を完了しました。設定はいつでも変更できます。', 'atshift-semantic-deterrence' ),
+		);
+
+		if ( isset( $messages[ $notice ] ) ) {
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $messages[ $notice ] ) . '</p></div>';
 		}
-		if ( isset( $_GET['atsdn-deleted'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'ローカル集計データを削除し、観測のみへ戻しました。実験割り当ては再度選択できます。', 'atshift-semantic-deterrence' ) . '</p></div>';
-		}
-		if ( isset( $_GET['atsdn-onboarded'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( '初回確認を完了しました。設定はいつでも変更できます。', 'atshift-semantic-deterrence' ) . '</p></div>';
-		}
+	}
+
+	private function redirect_with_notice( $notice, $redirect_url ) {
+		set_transient( $this->get_notice_transient_key(), sanitize_key( $notice ), MINUTE_IN_SECONDS );
+		wp_safe_redirect( $redirect_url );
+		exit;
+	}
+
+	private function get_notice_transient_key() {
+		return 'atsdn_admin_notice_' . get_current_user_id();
 	}
 
 	private function render_screen_nav( $active ) {
