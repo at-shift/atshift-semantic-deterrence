@@ -4,7 +4,7 @@ Tags: security, 403, automation, firewall, privacy
 Requires at least: 6.4
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 0.1.5
+Stable tag: 0.1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,13 @@ Data Sharing Scope And Use: https://github.com/at-shift/atshift-semantic-deterre
 初期状態では送信しません。匿名共有を有効にした場合だけ、日次ジッター付きで匿名集計を送信します。集計サーバは比較データの読み出し元であり、遠隔操作システムではありません。
 
 == Changelog ==
+
+= 0.1.6 =
+* ログイン済みで read 権限を持つユーザーが、概要とダッシュボードを閲覧できるようにしました。
+* 設定、初回同意、データ削除、手動の観測確定、エクスポートは引き続き manage_options 権限を持つ管理者だけが操作できます。
+* 閲覧専用ユーザーには設定メニューと初回同意画面を表示せず、ダッシュボードの閲覧による観測窓の確定処理も行いません。
+* Hub 運営者向けに、読み取り専用の研究用集計 CLI を追加しました。標本数、応答・実験群別の内訳、公開閾値までの不足、サイト間の寄与の偏りを確認できます。
+* 研究用集計は公開 API を追加せず、サイト識別子や認証情報を出力しません。公開閾値未満の集計を含む出力の保管方法と、統計的解釈の限界を文書化しました。
 
 = 0.1.5 =
 * Made admin success notices one-time messages so they do not return on refresh or the next visit.

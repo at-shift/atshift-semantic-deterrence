@@ -28,6 +28,10 @@ This layer does not replace a WAF, CDN rule, rate limit, authentication control,
 
 The Hub is intentionally modest: opted-in sites send delayed pseudonymous aggregate snapshots; every client may read thresholded cross-site results. It does not distribute executable code, force a response choice, change local settings, or issue blocking commands.
 
+Hub operators can inspect private collection readiness using the [research diagnostics CLI](aggregate-hub/README.md#private-research-diagnostics). Its below-threshold output stays on the operator's server and is not exposed through public aggregate endpoints.
+
+WordPress users with `read` can view the Overview and Dashboard. Settings and data-changing actions require `manage_options`; read-only viewers do not receive the first-run consent form.
+
 ```mermaid
 flowchart LR
     W[Participating WordPress sites] -->|Delayed signed aggregate snapshots| H[Aggregate Hub]

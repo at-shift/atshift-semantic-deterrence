@@ -51,6 +51,10 @@ The response catalog is intentionally bounded. Arbitrary custom warning text wou
 
 Deterrence, experiment participation, aggregate sharing, and aggregate readback each require an explicit choice. Experiment assignment is locked after the experiment starts and becomes selectable again only after local experiment data is deleted; deletion also returns the plugin to observation mode.
 
+## Dashboard Access
+
+Authenticated WordPress users with the `read` capability can view the Overview and Dashboard, including cached shared statistics. Settings, first-run consent, data deletion, manual outcome finalization and batch exports require `manage_options` (normally administrators). Viewing the Dashboard as a non-administrator does not trigger outcome finalization; scheduled maintenance continues to finalize observation windows.
+
 ## Response Catalog
 
 1. Policy notice

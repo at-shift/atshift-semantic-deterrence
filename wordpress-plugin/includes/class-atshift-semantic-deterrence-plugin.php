@@ -415,6 +415,10 @@ class Atshift_Semantic_Deterrence_Plugin {
 	}
 
 	public function filter_plugin_action_links( $links ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return $links;
+		}
+
 		$actions = array(
 			'settings' => sprintf(
 				'<a href="%1$s">%2$s</a>',

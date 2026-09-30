@@ -29,7 +29,7 @@ class Atshift_Semantic_Deterrence_Admin {
 		add_menu_page(
 			__( 'Semantic Deterrence', 'atshift-semantic-deterrence' ),
 			__( 'Semantic Deterrence', 'atshift-semantic-deterrence' ),
-			'manage_options',
+			'read',
 			'atshift-semantic-deterrence',
 			array( $this, 'render_readme_page' ),
 			'dashicons-shield-alt',
@@ -40,7 +40,7 @@ class Atshift_Semantic_Deterrence_Admin {
 			'atshift-semantic-deterrence',
 			__( '意味的抑止の概要', 'atshift-semantic-deterrence' ),
 			__( '概要', 'atshift-semantic-deterrence' ),
-			'manage_options',
+			'read',
 			'atshift-semantic-deterrence',
 			array( $this, 'render_readme_page' )
 		);
@@ -49,7 +49,7 @@ class Atshift_Semantic_Deterrence_Admin {
 			'atshift-semantic-deterrence',
 			__( '意味的抑止ダッシュボード', 'atshift-semantic-deterrence' ),
 			__( 'ダッシュボード', 'atshift-semantic-deterrence' ),
-			'manage_options',
+			'read',
 			'atshift-semantic-deterrence-dashboard',
 			array( $this, 'render_dashboard_page' )
 		);
@@ -95,7 +95,7 @@ class Atshift_Semantic_Deterrence_Admin {
 	}
 
 	public function render_readme_page() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'read' ) ) {
 			wp_die( esc_html__( 'このプラグインを管理する権限がありません。', 'atshift-semantic-deterrence' ) );
 		}
 		?>
@@ -183,11 +183,13 @@ class Atshift_Semantic_Deterrence_Admin {
 	}
 
 	public function render_dashboard_page() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'read' ) ) {
 			wp_die( esc_html__( 'このプラグインを管理する権限がありません。', 'atshift-semantic-deterrence' ) );
 		}
 
-		$this->storage->finalize_windows();
+		if ( current_user_can( 'manage_options' ) ) {
+			$this->storage->finalize_windows();
+		}
 
 		$settings      = Atshift_Semantic_Deterrence_Storage::get_settings();
 		$summary_30    = $this->storage->get_summary( 30 );
@@ -885,6 +887,10 @@ class Atshift_Semantic_Deterrence_Admin {
 	}
 
 	private function render_onboarding_modal() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$settings = Atshift_Semantic_Deterrence_Storage::get_settings();
 		if ( '1' === $settings['onboarding_completed'] ) {
 			return;
@@ -1028,6 +1034,9 @@ class Atshift_Semantic_Deterrence_Admin {
 				'url'   => admin_url( 'admin.php?page=atshift-semantic-deterrence-settings' ),
 			),
 		);
+		if ( ! current_user_can( 'manage_options' ) ) {
+			unset( $items['settings'] );
+		}
 		?>
 		<nav class="atsdn-screen-nav" aria-label="<?php esc_attr_e( 'Semantic Deterrence の画面', 'atshift-semantic-deterrence' ); ?>">
 			<?php foreach ( $items as $key => $item ) : ?>

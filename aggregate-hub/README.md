@@ -117,3 +117,27 @@ Run the following with the same PHP 8 runtime and configuration used for schema 
 ```
 
 The cleanup command deletes expired nonce and rate-limit rows, events older than 90 days, and orphaned batch metadata in bounded chunks. Run it repeatedly on later schedules when a large historical backlog exists.
+
+## Private Research Diagnostics
+
+Operators can inspect collection readiness on the Hub server:
+
+```sh
+umask 077
+/usr/bin/php8.4 /home/at-shift/semantic-deterrence-hub/tools/research-report.php --days=30 > /home/at-shift/semantic-deterrence-research.json
+```
+
+Use `ATSDN_HUB_CONFIG` for a non-default config path. `--days` accepts 1 through 90; the default 30 matches the public Hub's inclusive observed-date cutoff. The database contains each site's latest retained snapshot, so a 90-day query does not restore past replaced snapshots. Client observation dates use client-local time, while the cutoff is calculated in UTC, as in the public API.
+
+The CLI runs in a consistent, read-only MySQL transaction. It does not invoke cleanup, cache generation or ingestion. Keep its output outside the web root with restricted file permissions: it intentionally includes statistics below public privacy thresholds and is for operator review only. No public endpoint is added.
+
+The JSON reports contributing sites, configured key count (not installation count), current event totals, latest reception, per-response publication deficits, fixed/sequence/unassigned arms, generic controls by arm and HTTP status, indeterminate rates, HTTP status mix, plugin versions, categories and observation dates. Site contribution statistics include minimum, median, mean, maximum, largest-site share and concentration. No per-site rows, site hashes, key IDs, secrets or transport metadata are output. Group sections have a 1,000-row limit and an explicit `truncated` flag; totals remain complete.
+
+Rates describe recorded response events. They do not estimate unique agents or causal effects. No ranking, significance test or independent-event confidence interval is generated. Observation-only rows contribute to exposure totals but not response outcomes. Series counts, 24-hour outcomes and upstream WAF activity cannot be reconstructed from this schema.
+
+Regression checks:
+
+```sh
+php aggregate-hub/tests/research-report.php
+php tests/admin-permissions.php
+```
