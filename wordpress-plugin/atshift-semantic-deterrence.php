@@ -3,7 +3,7 @@
  * Plugin Name: atshift Semantic Deterrence
  * Plugin URI: https://github.com/at-shift/atshift-semantic-deterrence
  * Description: 不審な自動探索を観測し、必要に応じて機械可読な状態と自然言語の撤退勧告を返します。
- * Version: 0.1.6
+ * Version: 0.1.7
  * Update URI: https://github.com/at-shift/atshift-semantic-deterrence
  * Requires at least: 6.4
  * Requires PHP: 7.4
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ATSHIFT_SEMANTIC_DETERRENCE_VERSION', '0.1.6' );
+define( 'ATSHIFT_SEMANTIC_DETERRENCE_VERSION', '0.1.7' );
 define( 'ATSHIFT_SEMANTIC_DETERRENCE_FILE', __FILE__ );
 define( 'ATSHIFT_SEMANTIC_DETERRENCE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ATSHIFT_SEMANTIC_DETERRENCE_URL', plugin_dir_url( __FILE__ ) );
@@ -31,6 +31,9 @@ require_once ATSHIFT_SEMANTIC_DETERRENCE_DIR . 'includes/class-atshift-semantic-
 require_once ATSHIFT_SEMANTIC_DETERRENCE_DIR . 'includes/class-atshift-semantic-deterrence-admin.php';
 require_once ATSHIFT_SEMANTIC_DETERRENCE_DIR . 'includes/class-atshift-semantic-deterrence-updater.php';
 require_once ATSHIFT_SEMANTIC_DETERRENCE_DIR . 'includes/class-atshift-semantic-deterrence-plugin.php';
+require_once ATSHIFT_SEMANTIC_DETERRENCE_DIR . 'includes/class-atshift-semantic-deterrence-external-waf.php';
+
+Atshift_Semantic_Deterrence_External_Waf::init();
 
 register_activation_hook( __FILE__, array( 'Atshift_Semantic_Deterrence_Plugin', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'Atshift_Semantic_Deterrence_Plugin', 'deactivate' ) );

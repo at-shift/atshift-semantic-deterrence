@@ -1304,3 +1304,19 @@ msgstr "Пользовательские пути с высокой достов
 #~ msgstr ""
 #~ "Локальные агрегированные данные удалены. Назначение для эксперимента "
 #~ "можно выбрать заново."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAFの参考観測"
+msgstr "Справочные наблюдения внешних WAF"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAF連携を有効にする"
+msgstr "Включить интеграцию с внешними WAF"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "CloudSecureの保持ログを参照し、BBQの遮断判断を間引いて記録します。生IP・URL・攻撃文字列は保存せず、Hubへ送信しません。"
+msgstr "Читает сохранённые журналы CloudSecure и выборочно записывает решения BBQ о блокировке. Исходные IP-адреса, URL и строки атак не сохраняются и не отправляются в Hub."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
+msgstr "Не включаются в результаты эксперимента. CloudSecure показывает сохранённые записи за последние 24 часа (не обязательно заблокированные запросы); BBQ — выборку за последние 24 часа (не более одной записи в минуту)."

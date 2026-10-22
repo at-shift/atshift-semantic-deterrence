@@ -170,6 +170,7 @@ class Atshift_Semantic_Deterrence_Storage {
 			'excluded_paths'        => "/.well-known/security.txt\n/wp-json/\n/wp-admin/admin-ajax.php",
 			'custom_high_confidence_paths' => '',
 			'country_header_source' => 'disabled',
+			'external_waf_enabled'  => '0',
 			'local_detail_log'      => '0',
 			'sharing_enabled'       => '0',
 			'aggregate_read_enabled' => '0',
@@ -228,6 +229,7 @@ class Atshift_Semantic_Deterrence_Storage {
 		$settings['custom_high_confidence_paths'] = sanitize_textarea_field( $settings['custom_high_confidence_paths'] );
 		$settings['country_header_source'] = in_array( $settings['country_header_source'], array( 'disabled', 'cloudflare' ), true ) ? $settings['country_header_source'] : 'disabled';
 		$settings['local_detail_log']    = empty( $settings['local_detail_log'] ) ? '0' : '1';
+		$settings['external_waf_enabled'] = empty( $settings['external_waf_enabled'] ) ? '0' : '1';
 		$settings['sharing_enabled']     = empty( $settings['sharing_enabled'] ) ? '0' : '1';
 		$settings['aggregate_read_enabled'] = empty( $settings['aggregate_read_enabled'] ) ? '0' : '1';
 		$settings['experiment_enabled']  = empty( $settings['experiment_enabled'] ) ? '0' : '1';
@@ -794,5 +796,8 @@ class Atshift_Semantic_Deterrence_Storage {
 	public function delete_all_events() {
 		$table = $this->table_name();
 		$this->wpdb->query( "TRUNCATE TABLE {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		if ( class_exists( 'Atshift_Semantic_Deterrence_External_Waf', false ) ) {
+			Atshift_Semantic_Deterrence_External_Waf::clear();
+		}
 	}
 }

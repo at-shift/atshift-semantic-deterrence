@@ -1309,3 +1309,19 @@ msgstr "Aangepaste paden met hoge waarschijnlijkheid"
 #~ msgstr ""
 #~ "De lokale verzamelde gegevens zijn verwijderd. De experimentele "
 #~ "toewijzing kan opnieuw worden gekozen."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAFの参考観測"
+msgstr "Referentiewaarnemingen van externe WAF’s"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAF連携を有効にする"
+msgstr "Integratie met externe WAF’s inschakelen"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "CloudSecureの保持ログを参照し、BBQの遮断判断を間引いて記録します。生IP・URL・攻撃文字列は保存せず、Hubへ送信しません。"
+msgstr "Leest bewaarde CloudSecure-logboeken en neemt steekproeven van BBQ-blokkeerbeslissingen. Ruwe IP-adressen, URL’s en aanvalstekenreeksen worden niet opgeslagen of naar de Hub verzonden."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
+msgstr "Niet opgenomen in de experimentresultaten. CloudSecure toont bewaarde logboeken van de afgelopen 24 uur (niet noodzakelijk geblokkeerde verzoeken); BBQ toont steekproeven van de afgelopen 24 uur (maximaal één per minuut)."

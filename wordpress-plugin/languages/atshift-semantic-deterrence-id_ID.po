@@ -1292,3 +1292,19 @@ msgstr "Jalur khusus berkeyakinan tinggi"
 #~ msgstr ""
 #~ "Data agregat lokal telah dihapus. Penetapan eksperimen dapat dipilih "
 #~ "kembali."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAFの参考観測"
+msgstr "Pengamatan referensi WAF eksternal"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAF連携を有効にする"
+msgstr "Aktifkan integrasi WAF eksternal"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "CloudSecureの保持ログを参照し、BBQの遮断判断を間引いて記録します。生IP・URL・攻撃文字列は保存せず、Hubへ送信しません。"
+msgstr "Membaca log yang disimpan CloudSecure dan mengambil sampel keputusan pemblokiran BBQ. Alamat IP mentah, URL, dan string serangan tidak disimpan atau dikirim ke Hub."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
+msgstr "Tidak disertakan dalam hasil eksperimen. CloudSecure menampilkan log tersimpan dari 24 jam terakhir (belum tentu permintaan yang diblokir); BBQ menampilkan sampel dari 24 jam terakhir (maksimal satu per menit)."

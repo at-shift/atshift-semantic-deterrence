@@ -1255,3 +1255,19 @@ msgstr "신뢰도 높은 사용자 지정 경로"
 #~ msgid "ローカル集計データを削除しました。実験割り当ては再度選択できます。"
 #~ msgstr ""
 #~ "로컬 집계 데이터를 삭제했습니다. 실험 할당을 다시 선택할 수 있습니다."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAFの参考観測"
+msgstr "외부 WAF 참고 관측"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAF連携を有効にする"
+msgstr "외부 WAF 연동 활성화"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "CloudSecureの保持ログを参照し、BBQの遮断判断を間引いて記録します。生IP・URL・攻撃文字列は保存せず、Hubへ送信しません。"
+msgstr "CloudSecure의 보관 로그를 읽고 BBQ의 차단 판단을 표본으로 기록합니다. 원본 IP 주소, URL, 공격 문자열은 저장하거나 Hub로 전송하지 않습니다."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
+msgstr "실험 결과에는 포함되지 않습니다. CloudSecure는 최근 24시간의 보관 로그를 표시하며, 반드시 차단된 요청을 뜻하지는 않습니다. BBQ는 최근 24시간의 기록 표본을 표시합니다(분당 최대 1건)."

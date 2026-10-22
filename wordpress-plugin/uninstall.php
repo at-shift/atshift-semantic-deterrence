@@ -10,12 +10,14 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 require_once __DIR__ . '/includes/class-atshift-semantic-deterrence-storage.php';
+require_once __DIR__ . '/includes/class-atshift-semantic-deterrence-external-waf.php';
 
 $settings = Atshift_Semantic_Deterrence_Storage::get_settings();
 
 if ( '1' === (string) $settings['delete_on_uninstall'] ) {
 	$storage = new Atshift_Semantic_Deterrence_Storage();
 	$storage->drop_tables();
+	Atshift_Semantic_Deterrence_External_Waf::clear();
 	Atshift_Semantic_Deterrence_Storage::purge_all_request_guards();
 
 	delete_option( Atshift_Semantic_Deterrence_Storage::OPTION_SETTINGS );

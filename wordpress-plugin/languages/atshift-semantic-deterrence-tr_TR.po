@@ -1279,3 +1279,19 @@ msgstr "Özel yüksek güven yolları"
 
 #~ msgid "ローカル集計データを削除しました。実験割り当ては再度選択できます。"
 #~ msgstr "Yerel toplu veriler silindi. Deney ataması yeniden seçilebilir."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAFの参考観測"
+msgstr "Harici WAF referans gözlemleri"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAF連携を有効にする"
+msgstr "Harici WAF entegrasyonunu etkinleştir"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "CloudSecureの保持ログを参照し、BBQの遮断判断を間引いて記録します。生IP・URL・攻撃文字列は保存せず、Hubへ送信しません。"
+msgstr "CloudSecure tarafından tutulan günlükleri okur ve BBQ engelleme kararlarını örnekleyerek kaydeder. Ham IP adresleri, URL’ler ve saldırı dizeleri saklanmaz veya Hub’a gönderilmez."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
+msgstr "Deney sonuçlarına dahil edilmez. CloudSecure son 24 saatin saklanan günlüklerini gösterir (bunlar mutlaka engellenmiş istekler değildir); BBQ son 24 saatin örneklerini gösterir (dakikada en fazla bir kayıt)."

@@ -300,6 +300,8 @@ class Atshift_Semantic_Deterrence_Admin {
 				</div>
 			</section>
 
+			<?php $this->render_external_waf_reference( $settings ); ?>
+
 			<section class="atsdn-section">
 				<h2><?php esc_html_e( 'このサイトの観測期間別', 'atshift-semantic-deterrence' ); ?></h2>
 				<p class="atsdn-section-lede"><?php esc_html_e( '同じサイト内の観測を期間ごとに見ています。', 'atshift-semantic-deterrence' ); ?></p>
@@ -692,6 +694,13 @@ class Atshift_Semantic_Deterrence_Admin {
 									<p class="description"><?php esc_html_e( 'Cloudflare経由であることを確認したサイトだけで有効にしてください。CF-IPCountryの2文字コードだけをローカル保存し、IPは保存しません。この情報はHubへ送信しません。', 'atshift-semantic-deterrence' ); ?></p>
 								</td>
 							</tr>
+							<tr>
+								<th scope="row"><?php esc_html_e( '外部WAFの参考観測', 'atshift-semantic-deterrence' ); ?></th>
+								<td>
+									<label><input type="checkbox" name="external_waf_enabled" value="1" <?php checked( $settings['external_waf_enabled'], '1' ); ?>> <?php esc_html_e( '外部WAF連携を有効にする', 'atshift-semantic-deterrence' ); ?></label>
+									<p class="description"><?php esc_html_e( 'CloudSecureの保持ログを参照し、BBQの遮断判断を間引いて記録します。生IP・URL・攻撃文字列は保存せず、Hubへ送信しません。', 'atshift-semantic-deterrence' ); ?></p>
+								</td>
+							</tr>
 						</table>
 					</details>
 
@@ -786,6 +795,10 @@ class Atshift_Semantic_Deterrence_Admin {
 		$settings['aggregate_read_enabled'] = isset( $_POST['aggregate_read_enabled'] ) ? '1' : '0';
 		$settings['delete_on_uninstall'] = isset( $_POST['delete_on_uninstall'] ) ? '1' : '0';
 		$settings['local_detail_log']    = '0';
+		$settings['external_waf_enabled'] = isset( $_POST['external_waf_enabled'] ) ? '1' : '0';
+		if ( '1' !== $settings['external_waf_enabled'] ) {
+			Atshift_Semantic_Deterrence_External_Waf::clear();
+		}
 		if ( 'experiment' === $settings['mode'] && '1' === $settings['experiment_enabled'] && '1' !== $settings['experiment_assignment_locked'] ) {
 			$settings['experiment_assignment_locked'] = '1';
 			$settings['experiment_assignment_locked_at'] = current_time( 'mysql' );
@@ -856,6 +869,7 @@ class Atshift_Semantic_Deterrence_Admin {
 		$this->storage->delete_all_events();
 		$settings = Atshift_Semantic_Deterrence_Storage::get_settings();
 		$settings['mode'] = 'observe';
+		$settings['external_waf_enabled'] = '0';
 		$settings['experiment_enabled'] = '0';
 		$settings['experiment_assignment_locked'] = '0';
 		$settings['experiment_assignment_locked_at'] = '';
@@ -866,6 +880,25 @@ class Atshift_Semantic_Deterrence_Admin {
 			'deleted',
 			admin_url( 'admin.php?page=atshift-semantic-deterrence-dashboard' )
 		);
+	}
+
+	private function render_external_waf_reference( $settings ) {
+		if ( '1' !== ( $settings['external_waf_enabled'] ?? '0' ) ) {
+			return;
+		}
+		$reference = Atshift_Semantic_Deterrence_External_Waf::get_reference();
+		?>
+		<section class="atsdn-section atsdn-local-reference">
+			<h2><?php esc_html_e( '外部WAFの参考観測', 'atshift-semantic-deterrence' ); ?></h2>
+			<p class="atsdn-section-lede"><?php esc_html_e( '実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。', 'atshift-semantic-deterrence' ); ?></p>
+			<div class="atsdn-summary-grid atsdn-summary-grid--compact">
+				<?php
+				$this->render_summary_item( 'CloudSecure', class_exists( 'CloudSecureWP_Waf', false ) ? ( null === $reference['cloudsecure'] ? __( '測定中', 'atshift-semantic-deterrence' ) : $reference['cloudsecure'] ) : __( '無効', 'atshift-semantic-deterrence' ), 'detect' );
+				$this->render_summary_item( 'BBQ', defined( 'BBQ_VERSION' ) ? ( $reference['samples']['bbq'] ?? 0 ) : __( '無効', 'atshift-semantic-deterrence' ), 'warn' );
+				?>
+			</div>
+		</section>
+		<?php
 	}
 
 	public function download_anonymous_batch() {

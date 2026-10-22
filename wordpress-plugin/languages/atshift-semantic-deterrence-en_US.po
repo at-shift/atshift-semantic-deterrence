@@ -1274,3 +1274,19 @@ msgstr "High-Confidence Custom Paths"
 
 #~ msgid "Experimentの動作"
 #~ msgstr "How Experiment mode works"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAFの参考観測"
+msgstr "External WAF Reference Observations"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAF連携を有効にする"
+msgstr "Enable external WAF integration"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "CloudSecureの保持ログを参照し、BBQの遮断判断を間引いて記録します。生IP・URL・攻撃文字列は保存せず、Hubへ送信しません。"
+msgstr "Reads retained CloudSecure logs and samples BBQ block decisions. Raw IP addresses, URLs, and attack strings are not stored or sent to the Hub."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
+msgstr "Excluded from experiment results. CloudSecure shows retained logs from the last 24 hours (not necessarily blocked requests); BBQ shows samples from the last 24 hours (at most one per minute)."

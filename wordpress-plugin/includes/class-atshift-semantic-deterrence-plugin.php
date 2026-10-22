@@ -87,6 +87,7 @@ class Atshift_Semantic_Deterrence_Plugin {
 		$this->storage->finalize_windows();
 		$this->storage->purge_old_data();
 		Atshift_Semantic_Deterrence_Storage::purge_request_guards();
+		Atshift_Semantic_Deterrence_External_Waf::maintain();
 		$this->maybe_share_anonymous_batch();
 		$this->maybe_pull_aggregate_data();
 	}

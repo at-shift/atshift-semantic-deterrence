@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atshift_Semantic_Deterrence_Detector {
 	const DAILY_SALT_PREFIX = 'atshift_semantic_deterrence_salt_';
 	const NOT_FOUND_BUDGET_PER_MINUTE = 300;
+	const QUERY_SCAN_BYTES = 8192;
 
 	/** @var array<string,mixed> */
 	private $settings;
@@ -105,6 +106,12 @@ class Atshift_Semantic_Deterrence_Detector {
 		$path     = $this->get_current_path();
 		$method   = $this->get_request_method();
 		$category = $this->classify_path( $path, $method );
+		if ( '' === $category || 'method_anomaly' === $category ) {
+			$query_category = $this->classify_query( $path );
+			if ( '' !== $query_category ) {
+				$category = $query_category;
+			}
+		}
 		$level    = $this->level_for_category( $category );
 
 		if ( is_404() && ( '' === $category || 'method_anomaly' === $category ) ) {
@@ -296,6 +303,94 @@ class Atshift_Semantic_Deterrence_Detector {
 		}
 
 		return '';
+	}
+
+	private function classify_query( $path ) {
+		if ( isset( $_SERVER['QUERY_STRING'] ) ) {
+			$query = wp_unslash( substr( (string) $_SERVER['QUERY_STRING'], 0, self::QUERY_SCAN_BYTES ) );
+		} else {
+			$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? substr( (string) $_SERVER['REQUEST_URI'], 0, self::QUERY_SCAN_BYTES ) : '';
+			$query = (string) wp_parse_url( wp_unslash( $request_uri ), PHP_URL_QUERY );
+		}
+
+		// Inspect only transient, bounded strings. Never expose the query to filters or event records.
+		if ( $this->is_pear_query_probe( $query ) ) {
+			return 'other_high_confidence';
+		}
+
+		if ( substr_count( $query, '&' ) >= 64 ) {
+			return '';
+		}
+		// Invalid nesting/input limits must not turn hostile queries into a warning flood.
+		@parse_str( $query, $parameters );
+		$values = array();
+		foreach ( array( 'a', 'templateFile', 'prefix', 'content', 's', 'tag', 'tagstpl', 'element_parents', 'ajax_form', '_wrapper_format' ) as $key ) {
+			$values[$key] = isset( $parameters[$key] ) && is_string( $parameters[$key] ) ? rawurldecode( $parameters[$key] ) : '';
+		}
+
+		$content = $values['content'];
+		if (
+			'fetch' === $values['a'] && 'public/index' === $values['templateFile'] && "''" === $values['prefix'] &&
+			preg_match( '#^php[\x20\t\r\n]*file_put_contents\s*\(#i', $content ) &&
+			preg_match( '#\bbase64_decode\s*\(#i', $content ) && preg_match( '#;\s*/php$#i', $content )
+		) {
+			return 'other_high_confidence';
+		}
+
+		$route = $values['s'];
+		if ( preg_match( '#^/index/index/name/\$\{@?phpinfo\s*\(\s*\)\}$#i', $route ) ) {
+			return 'other_high_confidence';
+		}
+		if (
+			preg_match( '#^\?=(?:/\*[^*]{0,128}\*/|\s)*file_put_contents\s*\(\s*[\x22\x27]?runtime/archive/[a-z0-9_.-]{1,128}\.php[\x22\x27]?\s*,#i', $route ) &&
+			preg_match( '#\bbase64_decode\s*\(#i', $route ) && preg_match( '#;\?$#', $route )
+		) {
+			return 'other_high_confidence';
+		}
+
+		$tag = $values['tag'];
+		$call_gap = '(?:\s|/\*[^*]{0,128}\*/)*';
+		if (
+			preg_match( '#^[a-z0-9_.-]+\.html$#i', $values['tagstpl'] ) &&
+			false !== stripos( $tag, ':if(' ) &&
+			preg_match( '#\busort' . $call_gap . '\(#i', $tag ) &&
+			preg_match( '#\bcreate_function' . $call_gap . '\(#i', $tag )
+		) {
+			return 'other_high_confidence';
+		}
+
+		if (
+			'/user/register' === rtrim( strtolower( rawurldecode( $path ) ), '/' ) &&
+			'account/mail/#value' === $values['element_parents'] && '1' === $values['ajax_form'] &&
+			'drupal_ajax' === $values['_wrapper_format']
+		) {
+			return 'unrelated_admin_surface';
+		}
+
+		return '';
+	}
+
+	private function is_pear_query_probe( $query ) {
+		$has_command = false;
+		$normalized = '';
+		foreach ( explode( '&', $query ) as $argument ) {
+			for ( $pass = 0; $pass < 2; ++$pass ) {
+				$decoded = rawurldecode( $argument );
+				if ( $decoded === $argument ) {
+					break;
+				}
+				$argument = $decoded;
+			}
+			// Split before decoding so an encoded example in a normal search value stays a value.
+			if ( preg_match( '#^[+\x20\t\r\n]*config-create[+\x20\t\r\n]+/#i', $argument ) ) {
+				$has_command = true;
+			}
+			$normalized .= '&' . $argument;
+		}
+
+		return $has_command &&
+			preg_match( '#(?<![a-z0-9_])(?:passthru|system|shell_exec|exec)[\x20\t\r\n]*\(#i', $normalized ) &&
+			preg_match( '#/tmp/[a-z0-9_.-]{1,128}\.php(?:$|[+?&\x20\t\r\n])#i', $normalized );
 	}
 
 	private function rule_matches_path( $rule, $path ) {

@@ -1204,3 +1204,19 @@ msgstr "高置信度自定义路径"
 
 #~ msgid "ローカル集計データを削除しました。実験割り当ては再度選択できます。"
 #~ msgstr "已删除本地汇总数据。现在可以重新选择实验分配。"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAFの参考観測"
+msgstr "外部 WAF 参考观测"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAF連携を有効にする"
+msgstr "启用外部 WAF 集成"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "CloudSecureの保持ログを参照し、BBQの遮断判断を間引いて記録します。生IP・URL・攻撃文字列は保存せず、Hubへ送信しません。"
+msgstr "读取 CloudSecure 保留的日志，并对 BBQ 的拦截判定进行抽样记录。不保存原始 IP、URL 或攻击字符串，也不将这些信息发送到 Hub。"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
+msgstr "不计入实验结果。CloudSecure 显示最近 24 小时内保留的日志（不一定代表请求已被拦截）；BBQ 显示最近 24 小时的记录样本（每分钟最多一条）。"

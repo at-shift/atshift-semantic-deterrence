@@ -147,6 +147,8 @@ Only test sites and infrastructure you own or have explicit permission to assess
 ```bash
 find wordpress-plugin aggregate-hub -name '*.php' -print0 | xargs -0 -n1 php -l
 php aggregate-hub/tests/run.php
+php tests/query-detection.php
+php tests/admin-permissions.php
 for po in wordpress-plugin/languages/*.po; do msgfmt --check-format --check-header -o /dev/null "$po"; done
 ```
 

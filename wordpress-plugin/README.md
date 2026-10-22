@@ -69,9 +69,42 @@ Experiments also include a generic `403` control without a semantic response bod
 
 The plugin currently classifies high-confidence probes for sensitive configuration files, backup archives, version-control paths, unrelated administration surfaces, traversal-like paths, repeated `404` requests, method anomalies, and administrator-defined path prefixes.
 
+It also recognizes narrowly combined query signatures:
+
+- A bare PEAR `config-create` argument, a PHP command-execution call, and a `/tmp/*.php` destination together.
+- A template-fetch parameter combination with a PHP-delimited file write and Base64 decoder.
+- A route-expression wrapper containing a `phpinfo()` call, or a PHP-expression wrapper writing a Base64-decoded file under `runtime/archive/*.php`.
+- A legacy template conditional combining `usort`, `create_function` calls and an HTML template parameter.
+- The `/user/register` path with the specific Drupal mail-value, AJAX-form and wrapper parameter combination. This is classified as an unrelated administration surface, not proof that Drupal exists or that code ran; cautious sensitivity keeps it at level 1.
+
+Code-oriented signatures use the existing `other_high_confidence` category; a more specific path category takes precedence. Query inspection is transient and limited to the first 8,192 raw query bytes (or the first 8,192 request-URI bytes when the server does not supply `QUERY_STRING`), with at most two percent-decoding passes. Structured parameter inspection accepts fewer than 64 raw fields. Ordinary named search/form values containing encoded code examples are not treated as bare PEAR command arguments. These are narrow heuristics, not a general code-injection detector; deeper encodings, other destinations and POST bodies are outside their scope. A function name such as `base64_decode` or `file_put_contents`, a batch REST route or a validation API path alone does not classify a request.
+
+The query is never evaluated, sent to classification filters, saved to event records, or included in sharing payloads. Embedded Base64 content is not decoded and external addresses are never fetched. Existing exclusions, independent response opt-ins, duplicate suppression and write budgets still apply. Observation mode records the classification without changing the response. REST and WordPress admin requests remain excluded; handlers such as `admin-post.php` do not pass through the frontend observation hook. A WAF or server-level denial that stops a request before WordPress runs cannot be observed by this detector; do not weaken those protections to collect experiment data. PHP vulnerabilities triggered before application code runs must be addressed through the hosting/PHP security update, not this plugin.
+
 Local event records contain bounded categorical and experimental fields, response fingerprints, HTTP status, follow-up counts, outcome, policy version, and keyed local identifiers. When an administrator explicitly enables the Cloudflare reference-data adapter, they may also contain the two-character country or region code reported by `CF-IPCountry`. Raw IP addresses, full URLs, query values, cookies, request bodies, authorization headers, raw User-Agent values, domains, site names, and WordPress user data are not written to the event table.
 
 Local source identity still derives from the server-observed `REMOTE_ADDR`; the optional country code never affects classification, response selection, throttling, or source identity. The dashboard presents hourly and country or region observations as local reference data, not as experiment outcomes or proof of an attacker's location. A proxy or VPN exit may be shown instead. The country-code adapter is off by default and should be enabled only when the site is known to be behind Cloudflare.
+
+### External WAF Reference Observations
+
+The separate **Enable external WAF integration** setting under Advanced Settings is off by default. It adds a read-only dashboard section, not a new WAF or an IP-blocking feature:
+
+- **CloudSecure WP Security:** when active, maintenance reads a count of retained detection logs from the last 24 hours. It checks at most every five minutes and scans at most the newest 10,000 rows. A retained detection does not necessarily mean a request was blocked. Only the timestamp column and aggregate count are read; the adapter does not select IP addresses, URLs, matched strings, or attack details. Snapshots older than 15 minutes are not displayed as current. WP-Cron depends on site traffic, so refresh timing is not guaranteed.
+- **BBQ Firewall:** an early `bbq_response` listener records a categorical sample of the provider's block decision before BBQ sends its own response. Samples are limited to one per provider per 60 seconds, displayed only for the last 24 hours and capped at 6,000 stored rows. Expired stored samples are pruned during collection and WP-Cron maintenance, not on read-only dashboard views. These are sampled decisions, not total attack counts or proof that the response was delivered. Raw match strings are inspected transiently and never stored. Persistent object caching can reduce duplicate work; without it, the atomic sampling claim still requires database checks during bursts.
+
+Reference records never enter the experiment event table, response-effectiveness denominator, anonymous exports, or Hub uploads. Reading the dashboard does not refresh provider logs or write samples. Turning the integration off or deleting local data clears only this plugin's reference records, never the WAF's own logs. Ordinary retention cleanup runs through WP-Cron. Adapter errors must not interfere with the provider's block response or experiment maintenance.
+
+An internal developer action accepts exactly three bounded fields:
+
+```php
+do_action( 'atsdn_external_waf_observation', array(
+    'provider' => 'bbq',
+    'category' => 'code_injection',
+    'action'   => 'block_decision',
+) );
+```
+
+Allowed providers are `bbq`, `wordfence`, `ninjafirewall`, and `siteguard`; categories are `sql_injection`, `xss`, `command_injection`, `code_injection`, `mail_injection`, and `other`; actions are `block_decision`, `detected`, `learning`, and `unknown`. Extra fields, including raw IP addresses, URLs, payloads and caller-supplied timestamps, are rejected. This is a trusted in-process plugin API, not a public HTTP endpoint. Only the BBQ listener and CloudSecure count adapter are included; the other provider IDs reserve a boundary for future adapters and do not imply automatic integration. Pre-WordPress WAF blocking still needs a separate bridge. No third-party plugin code is redistributed or modified.
 
 ## Aggregate Sharing
 
@@ -156,6 +189,10 @@ The plugin is intentionally dependency-light. Before opening a Pull Request:
 
 ```bash
 find . -name '*.php' -print0 | xargs -0 -n1 php -l
+php ../tests/query-detection.php
+php ../tests/admin-permissions.php
+php ../tests/external-waf.php
+php ../tests/external-waf-storage.php
 for po in languages/*.po; do msgfmt --check-format --check-header -o /dev/null "$po"; done
 ```
 

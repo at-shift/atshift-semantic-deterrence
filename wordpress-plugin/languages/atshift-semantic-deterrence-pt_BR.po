@@ -1287,3 +1287,19 @@ msgstr "Caminhos personalizados de alta confiança"
 #~ msgstr ""
 #~ "Os dados agregados locais foram excluídos. As atribuições do Experiment "
 #~ "podem ser selecionadas novamente."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAFの参考観測"
+msgstr "Observações de referência de WAFs externos"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "外部WAF連携を有効にする"
+msgstr "Ativar integração com WAFs externos"
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "CloudSecureの保持ログを参照し、BBQの遮断判断を間引いて記録します。生IP・URL・攻撃文字列は保存せず、Hubへ送信しません。"
+msgstr "Consulta os registros mantidos pelo CloudSecure e coleta amostras das decisões de bloqueio do BBQ. Endereços IP brutos, URLs e sequências de ataque não são armazenados nem enviados ao Hub."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
+msgstr "Não entram nos resultados do experimento. O CloudSecure mostra os registros mantidos das últimas 24 horas (não necessariamente solicitações bloqueadas); o BBQ mostra amostras das últimas 24 horas (no máximo uma por minuto)."
