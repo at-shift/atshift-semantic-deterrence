@@ -4,7 +4,7 @@ Tags: security, 403, automation, firewall, privacy
 Requires at least: 6.4
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 0.1.7
+Stable tag: 0.1.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,12 @@ Data Sharing Scope And Use: https://github.com/at-shift/atshift-semantic-deterre
 初期状態では送信しません。匿名共有を有効にした場合だけ、日次ジッター付きで匿名集計を送信します。集計サーバは比較データの読み出し元であり、遠隔操作システムではありません。
 
 == Changelog ==
+
+= 0.1.8 =
+* IP Blocker with WAF 0.1.3と併用するためのローカル測定保護APIを追加しました。SDNの応答・実験モード・割り当ては変更しません。
+* サーバー遮断変更と重なる未確定の観測は、サイト側の制限による判定不能（rate_limited）に分け、警告の成功として数えません。生IPやUAの追加保存・共有は行いません。
+* 測定リビジョンをローカル保存し、変更と競合した遅いリクエストや書き込み失敗後の再集計でも、判定不能が継続非観測へ変わらないようにしました。既に観測した継続と確定済みの結果は維持します。
+* 途中停止時には測定保護を維持し、管理画面へ案内を表示します。現在のサーバー設定と自己診断を確認してからIP Blocker側で測定を明示的に再開します。
 
 = 0.1.7 =
 * 初期値は無効の「外部WAFの参考観測」を追加しました。CloudSecureの保持ログ件数とBBQの間引き記録を、意味的応答の実験結果とは別に表示します。

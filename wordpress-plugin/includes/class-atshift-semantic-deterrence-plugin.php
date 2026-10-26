@@ -93,6 +93,7 @@ class Atshift_Semantic_Deterrence_Plugin {
 	}
 
 	public function observe_request() {
+		$server_block_snapshot = Atshift_Semantic_Deterrence_Server_Blocks::snapshot( false );
 		$settings = Atshift_Semantic_Deterrence_Storage::get_settings();
 		$detector = new Atshift_Semantic_Deterrence_Detector( $settings );
 		$classification = $detector->classify_current_request();
@@ -140,6 +141,7 @@ class Atshift_Semantic_Deterrence_Plugin {
 		if ( $this->should_record_event( $source_hmac, $category, $variant, $status, $settings ) ) {
 			$this->storage->record_event(
 				array(
+					'server_block_snapshot' => $server_block_snapshot,
 					'series_hmac'          => $series_hmac,
 					'source_hmac'          => $source_hmac,
 					'country_code'         => $this->get_local_country_code( $settings ),

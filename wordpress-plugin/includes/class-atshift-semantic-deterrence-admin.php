@@ -1021,6 +1021,12 @@ class Atshift_Semantic_Deterrence_Admin {
 	}
 
 	private function render_notice_messages() {
+		if ( class_exists( 'Atshift_Semantic_Deterrence_Server_Blocks', false ) ) {
+			$state = Atshift_Semantic_Deterrence_Server_Blocks::snapshot();
+			if ( is_wp_error( $state ) || $state['active'] ) {
+				echo '<div class="notice notice-warning"><p>' . esc_html__( 'サーバー遮断の変更が未完了、または連携状態を確認できません。この間の応答は制限による判定不能として扱います。IP Blocker with WAFで現在の設定を確認し、SDNの測定を再開してください。', 'atshift-semantic-deterrence' ) . '</p></div>';
+			}
+		}
 		$transient_key = $this->get_notice_transient_key();
 		$notice        = get_transient( $transient_key );
 

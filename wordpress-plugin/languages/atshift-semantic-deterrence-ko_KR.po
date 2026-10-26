@@ -1271,3 +1271,7 @@ msgstr "CloudSecure의 보관 로그를 읽고 BBQ의 차단 판단을 표본으
 #: includes/class-atshift-semantic-deterrence-admin.php
 msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
 msgstr "실험 결과에는 포함되지 않습니다. CloudSecure는 최근 24시간의 보관 로그를 표시하며, 반드시 차단된 요청을 뜻하지는 않습니다. BBQ는 최근 24시간의 기록 표본을 표시합니다(분당 최대 1건)."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "サーバー遮断の変更が未完了、または連携状態を確認できません。この間の応答は制限による判定不能として扱います。IP Blocker with WAFで現在の設定を確認し、SDNの測定を再開してください。"
+msgstr "서버 차단 변경이 완료되지 않았거나 연동 상태를 확인할 수 없습니다. 이 기간의 응답은 사이트 측 제한으로 인한 판정 불가로 처리합니다. IP Blocker with WAF에서 현재 설정을 확인하고 SDN 측정을 재개해 주세요."

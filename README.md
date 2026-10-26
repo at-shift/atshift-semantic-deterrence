@@ -20,6 +20,10 @@ The project does not identify visitors as AI. It classifies a bounded set of sus
 
 This layer does not replace a WAF, CDN rule, rate limit, authentication control, access policy, or server hardening.
 
+## Manual Server IP Blocks
+
+SDN 0.1.8 and IP Blocker with WAF 0.1.3 can run response experiments alongside administrator-initiated server blocks. SDN keeps its mode, response catalog and assignment unchanged. Before a server-file change, the blocker opens a durable local measurement fence; overlapping undecided windows are conservatively classified as `rate_limited` (indeterminate), not as a warning success. This applies site-wide to avoid retaining an IP-to-series mapping. See [the coexistence protocol](docs/IP_BLOCKER_COEXISTENCE.md) for concurrency, recovery and privacy boundaries. Existing hosting/CDN/WAF blocks outside this integration remain unobservable to SDN.
+
 ## Repository
 
 - [`wordpress-plugin/`](wordpress-plugin/) contains the installable WordPress plugin.

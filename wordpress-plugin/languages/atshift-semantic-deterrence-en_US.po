@@ -1290,3 +1290,7 @@ msgstr "Reads retained CloudSecure logs and samples BBQ block decisions. Raw IP 
 #: includes/class-atshift-semantic-deterrence-admin.php
 msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
 msgstr "Excluded from experiment results. CloudSecure shows retained logs from the last 24 hours (not necessarily blocked requests); BBQ shows samples from the last 24 hours (at most one per minute)."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "サーバー遮断の変更が未完了、または連携状態を確認できません。この間の応答は制限による判定不能として扱います。IP Blocker with WAFで現在の設定を確認し、SDNの測定を再開してください。"
+msgstr "A server block change is unfinished, or the integration state cannot be verified. Responses during this period are indeterminate due to site-side restriction. Review the current configuration in IP Blocker with WAF and resume SDN measurement."

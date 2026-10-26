@@ -1321,3 +1321,7 @@ msgstr "Consulta i log conservati da CloudSecure e campiona le decisioni di bloc
 #: includes/class-atshift-semantic-deterrence-admin.php
 msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
 msgstr "Escluse dai risultati dell’esperimento. CloudSecure mostra i log conservati delle ultime 24 ore (non necessariamente richieste bloccate); BBQ mostra campioni delle ultime 24 ore (al massimo uno al minuto)."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "サーバー遮断の変更が未完了、または連携状態を確認できません。この間の応答は制限による判定不能として扱います。IP Blocker with WAFで現在の設定を確認し、SDNの測定を再開してください。"
+msgstr "Una modifica ai blocchi del server non è stata completata oppure lo stato dell’integrazione non è verificabile. Le risposte di questo periodo sono considerate indeterminate a causa di una limitazione del sito. Verificare la configurazione attuale in IP Blocker with WAF e riprendere la misurazione SDN."

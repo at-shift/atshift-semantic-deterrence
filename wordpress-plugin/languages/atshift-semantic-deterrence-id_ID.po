@@ -1308,3 +1308,7 @@ msgstr "Membaca log yang disimpan CloudSecure dan mengambil sampel keputusan pem
 #: includes/class-atshift-semantic-deterrence-admin.php
 msgid "実験結果には含みません。CloudSecureは直近24時間の保持ログ（遮断とは限りません）、BBQは直近24時間の記録サンプル（1分1件まで）です。"
 msgstr "Tidak disertakan dalam hasil eksperimen. CloudSecure menampilkan log tersimpan dari 24 jam terakhir (belum tentu permintaan yang diblokir); BBQ menampilkan sampel dari 24 jam terakhir (maksimal satu per menit)."
+
+#: includes/class-atshift-semantic-deterrence-admin.php
+msgid "サーバー遮断の変更が未完了、または連携状態を確認できません。この間の応答は制限による判定不能として扱います。IP Blocker with WAFで現在の設定を確認し、SDNの測定を再開してください。"
+msgstr "Perubahan pemblokiran server belum selesai atau status integrasi tidak dapat diverifikasi. Respons selama periode ini dianggap tidak dapat ditentukan karena pembatasan di sisi situs. Periksa konfigurasi saat ini di IP Blocker with WAF lalu lanjutkan pengukuran SDN."

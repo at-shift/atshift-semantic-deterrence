@@ -14,7 +14,7 @@ class Atshift_Semantic_Deterrence_Storage {
 	const OPTION_SECRET   = 'atshift_semantic_deterrence_secret';
 	const OPTION_HUB_SECRET = 'atshift_semantic_deterrence_hub_secret';
 	const OPTION_SCHEMA_VERSION = 'atshift_semantic_deterrence_schema_version';
-	const SCHEMA_VERSION = 4;
+	const SCHEMA_VERSION = 5;
 	const OUTCOME_UNKNOWN = 'unknown';
 	const GUARD_CLAIM_PREFIX = 'atsdn_guard_claim_';
 	const GUARD_BUDGET_PREFIX = 'atsdn_guard_budget_';
@@ -321,6 +321,7 @@ class Atshift_Semantic_Deterrence_Storage {
 			experiment_arm varchar(40) NOT NULL DEFAULT '',
 			response_fingerprint char(64) NOT NULL DEFAULT '',
 			response_label varchar(80) NOT NULL DEFAULT '',
+			server_block_revision char(32) NOT NULL DEFAULT '',
 			http_status smallint(5) unsigned NOT NULL DEFAULT 0,
 			follow_up_count int(10) unsigned NOT NULL DEFAULT 0,
 			outcome varchar(40) NOT NULL DEFAULT 'unknown',
@@ -378,12 +379,17 @@ class Atshift_Semantic_Deterrence_Storage {
 			'last_seen_at'   => null,
 		);
 		$event        = wp_parse_args( $event, $defaults );
+		$fence = class_exists( 'Atshift_Semantic_Deterrence_Server_Blocks', false );
+		$snapshot = $fence ? ( $event['server_block_snapshot'] ?? Atshift_Semantic_Deterrence_Server_Blocks::snapshot() ) : null;
+		if ( $fence && ! empty( $event['responded'] ) && Atshift_Semantic_Deterrence_Server_Blocks::interrupted( $snapshot ) ) {
+			$event['outcome'] = 'rate_limited';
+		}
 		$country_code = strtoupper( sanitize_text_field( $event['country_code'] ) );
 		if ( ! preg_match( '/^(?:[A-Z]{2}|T1)$/', $country_code ) ) {
 			$country_code = '';
 		}
 
-		$this->wpdb->insert(
+		$inserted = $this->wpdb->insert(
 			$this->table_name(),
 			array(
 				'created_at'      => sanitize_text_field( $event['created_at'] ),
@@ -397,6 +403,7 @@ class Atshift_Semantic_Deterrence_Storage {
 				'experiment_arm'  => sanitize_key( $event['experiment_arm'] ),
 				'response_fingerprint' => sanitize_text_field( $event['response_fingerprint'] ),
 				'response_label'  => sanitize_text_field( $event['response_label'] ),
+				'server_block_revision' => is_array( $snapshot ) && preg_match( '/^[a-f0-9]{32}$/D', $snapshot['revision'] ?? '' ) ? $snapshot['revision'] : '',
 				'http_status'     => absint( $event['http_status'] ),
 				'follow_up_count' => absint( $event['follow_up_count'] ),
 				'outcome'         => sanitize_key( $event['outcome'] ),
@@ -406,10 +413,15 @@ class Atshift_Semantic_Deterrence_Storage {
 				'window_ends_at'  => sanitize_text_field( $event['window_ends_at'] ),
 				'last_seen_at'    => $event['last_seen_at'] ? sanitize_text_field( $event['last_seen_at'] ) : null,
 			),
-			array( '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s' )
+			array( '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s' )
 		);
 
-		return (int) $this->wpdb->insert_id;
+		$id = false === $inserted ? 0 : (int) $this->wpdb->insert_id;
+		// Close the race where the fence starts between the pre-insert read and INSERT.
+		if ( $id && $fence && ! empty( $event['responded'] ) && Atshift_Semantic_Deterrence_Server_Blocks::interrupted( $snapshot ) ) {
+			$this->wpdb->query( $this->wpdb->prepare( "UPDATE {$this->table_name()} SET outcome = 'rate_limited' WHERE id = %d AND outcome IN ('unknown', 'observed_ceased')", $id ) );
+		}
+		return $id;
 	}
 
 	public function mark_follow_up( $source_hmac, $category, $level ) {
@@ -433,6 +445,7 @@ class Atshift_Semantic_Deterrence_Storage {
 			)
 		);
 
+		$updated = 0;
 		foreach ( $pending as $row ) {
 			if ( $level > (int) $row->level ) {
 				$outcome = 'intensified';
@@ -442,21 +455,22 @@ class Atshift_Semantic_Deterrence_Storage {
 				$outcome = 'continued_alternate';
 			}
 
-			$this->wpdb->query(
+			$changed = $this->wpdb->query(
 				$this->wpdb->prepare(
 					"UPDATE {$table}
 					SET follow_up_count = follow_up_count + 1,
 						last_seen_at = %s,
 						outcome = %s
-					WHERE id = %d",
+					WHERE id = %d AND outcome IN ('unknown', 'observed_ceased')",
 					$now,
 					$outcome,
 					(int) $row->id
 				)
 			);
+			$updated += false === $changed ? 0 : $changed;
 		}
 
-		return count( $pending );
+		return $updated;
 	}
 
 	public function has_recent_continuation( $source_hmac ) {
@@ -498,6 +512,18 @@ class Atshift_Semantic_Deterrence_Storage {
 	public function finalize_windows() {
 		$table = $this->table_name();
 		$now   = current_time( 'mysql' );
+		if ( class_exists( 'Atshift_Semantic_Deterrence_Server_Blocks', false ) ) {
+			$state = Atshift_Semantic_Deterrence_Server_Blocks::snapshot();
+			$active = is_wp_error( $state ) || $state['active'] ? 1 : 0;
+			$revision = is_wp_error( $state ) ? '' : $state['revision'];
+			// Persisted revisions also protect late inserts and a failed post-insert censor.
+			$this->wpdb->query( $this->wpdb->prepare(
+				"UPDATE {$table} SET outcome = CASE WHEN server_block_revision <> %s OR %d = 1 THEN 'rate_limited' ELSE 'observed_ceased' END
+				WHERE responded = 1 AND outcome = 'unknown' AND (window_ends_at < %s OR server_block_revision <> %s OR %d = 1)",
+				$revision, $active, $now, $revision, $active
+			) );
+			return;
+		}
 
 		$this->wpdb->query(
 			$this->wpdb->prepare(

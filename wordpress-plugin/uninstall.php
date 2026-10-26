@@ -24,6 +24,7 @@ if ( '1' === (string) $settings['delete_on_uninstall'] ) {
 	delete_option( Atshift_Semantic_Deterrence_Storage::OPTION_SECRET );
 	delete_option( Atshift_Semantic_Deterrence_Storage::OPTION_HUB_SECRET );
 	delete_option( Atshift_Semantic_Deterrence_Storage::OPTION_SCHEMA_VERSION );
+	delete_option( 'atsdn_server_block_measurement' );
 	wp_clear_scheduled_hook( 'atshift_semantic_deterrence_maintenance' );
 
 	global $wpdb;

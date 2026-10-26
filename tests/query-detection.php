@@ -27,6 +27,9 @@ function apply_filters( $name, $value, ...$arguments ) {
 	return $value;
 }
 class Query_Response_Sent extends RuntimeException {}
+class Atshift_Semantic_Deterrence_Server_Blocks {
+	public static function snapshot( $fresh = true ) { return array( 'revision' => '', 'active' => false, 'started_at' => '' ); }
+}
 function status_header( $status ) { throw new Query_Response_Sent( 'response', $status ); }
 class Atshift_Semantic_Deterrence_Storage {
 	public static $settings;
@@ -190,7 +193,7 @@ foreach ( array( 'observe', 'deter', 'deter_limit', 'experiment' ) as $mode ) {
 		query_assert( ( $responds ? 1 : 0 ) === $event['responded'], 'response fact matches mode' );
 		query_assert( ( $responds ? 403 : 200 ) === $event['http_status'], 'observed or returned HTTP status' );
 		query_assert( $responds || 'observe_only' === $event['variant'], 'nonparticipants remain observation-only' );
-		query_assert( array( 'series_hmac', 'source_hmac', 'country_code', 'category', 'level', 'variant', 'experiment_arm', 'http_status', 'policy_version', 'responded', 'response_fingerprint', 'response_label' ) === array_keys( $event ), 'event payload has no new sensitive fields' );
+		query_assert( array( 'server_block_snapshot', 'series_hmac', 'source_hmac', 'country_code', 'category', 'level', 'variant', 'experiment_arm', 'http_status', 'policy_version', 'responded', 'response_fingerprint', 'response_label' ) === array_keys( $event ), 'event payload has only the local measurement snapshot added' );
 		$serialized = json_encode( array( $event, $filter_calls, Atshift_Semantic_Deterrence_Storage::$claims ) );
 		query_assert( false === strpos( $serialized, 'private-fixture' ) && false === strpos( $serialized, 'passthru' ) && false === strpos( $serialized, 'wp-pear-rce-fixture' ), 'query never reaches records, filters or throttle keys' );
 	}
